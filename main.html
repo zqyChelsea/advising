@@ -1,0 +1,487 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PolyU Advising &amp; Wellness Companion</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- Iconify -->
+<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+<!-- ECharts -->
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<style>
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        @keyframes slideIn { from { transform: translateX(-20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .animate-slide-in { animation: slideIn 0.3s ease-out forwards; }
+        .glass-morphism { backdrop-filter: blur(12px); background: rgba(255, 255, 255, 0.7); }
+    </style>
+</head>
+<body class="bg-[#F2F4F2] text-[#5D6D7E] font-sans antialiased overflow-hidden">
+<div class="flex h-screen w-full p-4 gap-4">
+<!-- 1. 全局侧边导航 -->
+<nav class="w-20 lg:w-72 bg-[#8EB19D] rounded-3xl shadow-lg border border-[#7B9D8A] flex flex-col items-center lg:items-stretch py-8 transition-all duration-300">
+<div class="px-6 mb-10 flex items-center gap-3 border-b border-[#A7C4B5] pb-6">
+<div class="w-10 h-10 bg-[#FFFFFF] rounded-xl flex items-center justify-center text-[#8EB19D]">
+<span class="iconify text-2xl" data-icon="flat-color-icons:graduation-cap"></span>
+</div>
+<h1 class="font-bold text-lg leading-tight hidden lg:block text-white">PolyU Advising + Wellness</h1>
+</div>
+<div class="flex-1 px-3 space-y-1">
+<div class="nav-group mb-4">
+<button class="nav-btn group flex items-center gap-4 w-full px-4 py-3 rounded-xl bg-white/20 text-white transition-all font-medium" data-tab="chat" onclick="switchTab('chat')">
+<span class="iconify text-2xl" data-icon="solar:chat-round-dots-bold-duotone" style="color: #FFE4B5"></span>
+<span class="hidden lg:block text-content" data-en="Advisor Chat" data-zh="咨询对话">Advisor Chat</span>
+</button>
+<!-- 对话历史集成 -->
+<div class="hidden lg:block mt-2 ml-4 pl-4 border-l border-[#A7C4B5] space-y-2 overflow-y-auto max-h-48 hide-scrollbar">
+<div class="p-2 hover:bg-white/5 rounded-lg cursor-pointer group">
+<p class="text-[13px] text-white/80 truncate">Graduation Requirements</p>
+<p class="text-[10px] text-white/40">Today</p>
+</div>
+<div class="p-2 hover:bg-white/5 rounded-lg cursor-pointer group">
+<p class="text-[13px] text-white/80 truncate">COMP2011 Subject</p>
+<p class="text-[10px] text-white/40">Yesterday</p>
+</div>
+</div>
+</div>
+<button class="nav-btn group flex items-center gap-4 w-full px-4 py-3 rounded-xl text-white hover:bg-white/5 transition-all font-medium" data-tab="profile" onclick="switchTab('profile')">
+<span class="iconify text-2xl" data-icon="solar:user-circle-bold-duotone" style="color: #D4A373"></span>
+<span class="hidden lg:block text-content" data-en="Profile" data-zh="个人资料">Profile</span>
+</button>
+<button class="nav-btn group flex items-center gap-4 w-full px-4 py-3 rounded-xl text-white hover:bg-white/5 transition-all font-medium" data-tab="tickets" onclick="switchTab('tickets')">
+<span class="iconify text-2xl" data-icon="solar:ticket-bold-duotone" style="color: #CCD5AE"></span>
+<span class="hidden lg:block text-content" data-en="Report Issues" data-zh="问题反馈">Report Issues</span>
+</button>
+<button class="nav-btn group flex items-center gap-4 w-full px-4 py-3 rounded-xl text-white hover:bg-white/5 transition-all font-medium" data-tab="resources" onclick="switchTab('resources')">
+<span class="iconify text-2xl" data-icon="solar:library-bold-duotone" style="color: #E9EDC9"></span>
+<span class="hidden lg:block text-content" data-en="Resources" data-zh="政策资料">Resources</span>
+</button>
+</div>
+<div class="mt-auto px-3 border-t border-white/10 pt-6 space-y-2">
+<button class="flex items-center gap-4 w-full px-4 py-3 rounded-xl text-white hover:bg-white/5 transition-all font-medium">
+<span class="iconify text-2xl" data-icon="flat-color-icons:settings"></span>
+<span class="hidden lg:block text-content" data-en="Settings" data-zh="系统设置">Settings</span>
+</button>
+<div class="p-4 bg-white/5 rounded-2xl flex items-center gap-3">
+<div class="w-10 h-10 rounded-full border-2 border-white/20 overflow-hidden">
+<img alt="User" class="object-cover" src="https://modao.cc/agent-py/media/generated_images/2026-01-03/0eebdb43cffd4cd9b7c2fbff00947d1e.jpg"/>
+</div>
+<div class="hidden lg:block flex-1 overflow-hidden">
+<p class="text-white text-sm font-bold truncate">Li Ming</p>
+<button class="text-[10px] text-white flex items-center gap-1 hover:text-[#E67E22]" onclick="toggleLanguage()">
+<span class="iconify" data-icon="solar:global-linear"></span>
+<span id="lang-text">English</span>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<!-- 2. 主工作区 -->
+<main class="flex-1 relative overflow-hidden bg-white/40 rounded-3xl border border-white/50 shadow-sm overflow-y-auto hide-scrollbar">
+<!-- 2.1 Advisor Chat 页面 -->
+<div class="tab-content h-full flex flex-col lg:flex-row p-4 gap-4 animate-slide-in" id="tab-chat">
+<!-- 聊天主窗 - 宽度自适应 -->
+<section class="flex-1 bg-white rounded-2xl flex flex-col shadow-sm border border-[#F5F8FA] overflow-hidden">
+<header class="p-5 border-b border-[#F2F4F2] flex items-center justify-between sticky top-0 z-10 bg-white/90 backdrop-blur">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-[#F2F4F2] rounded-2xl flex items-center justify-center">
+<span class="iconify text-3xl" data-icon="flat-color-icons:assistant"></span>
+</div>
+<div>
+<h3 class="font-bold text-[#2C3E50] text-lg">PolyU Companion</h3>
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 bg-[#6BC4A6] rounded-full animate-pulse"></span>
+<span class="text-xs text-[#95A5A6] font-medium">Warm Advisor Ready | 2026-01-08</span>
+</div>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="px-5 py-2.5 bg-[#F5F8FA] text-[#6B8E7B] rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-[#E8F0EB] transition-all border border-[#6B8E7B]/10">
+<span class="iconify" data-icon="flat-color-icons:plus"></span>
+<span class="text-content" data-en="New Chat" data-zh="开启新对话">New Chat</span>
+</button>
+<button class="px-5 py-2.5 bg-[#6B8E7B] text-white rounded-xl text-sm font-bold flex items-center gap-2 hover:bg-[#5A7A69] shadow-md transition-all" onclick="switchTab('tickets')">
+<span class="iconify" data-icon="flat-color-icons:template"></span>
+<span class="text-content" data-en="Report Issues" data-zh="问题反馈">Report Issues</span>
+</button>
+</div>
+</header>
+<div class="flex-1 overflow-y-auto p-6 space-y-6 hide-scrollbar" id="chat-messages">
+<!-- AI 欢迎语 -->
+<div class="flex gap-4 max-w-2xl">
+<div class="w-10 h-10 bg-[#E8F0EB] rounded-2xl flex-shrink-0 flex items-center justify-center text-[#6B8E7B]">
+<span class="iconify text-xl" data-icon="solar:star-fall-2-bold-duotone"></span>
+</div>
+<div class="space-y-4">
+<div class="bg-[#F5F8FA] p-4 rounded-2xl rounded-tl-none border border-[#E8F0EB]">
+<p class="text-slate-700 leading-relaxed">Hi Li Ming! I'm your Academic Advisor. I noticed that the subject registration period is approaching. Do you need me to help you check for GUR or WIE gaps for the Fall 2026 semester?</p>
+</div>
+<div class="flex flex-wrap gap-2">
+<button class="px-3 py-1.5 bg-white border border-slate-200 rounded-full text-xs font-semibold text-slate-600 hover:border-[#8EB19D] hover:text-[#6B8E7B] transition-all">Graduation Gap Check</button>
+<button class="px-3 py-1.5 bg-white border border-slate-200 rounded-full text-xs font-semibold text-slate-600 hover:border-[#8EB19D] hover:text-[#6B8E7B] transition-all">WIE Application</button>
+<button class="px-3 py-1.5 bg-white border border-slate-200 rounded-full text-xs font-semibold text-slate-600 hover:border-[#8EB19D] hover:text-[#6B8E7B] transition-all">Subject Choice Advice</button>
+</div>
+</div>
+</div>
+<!-- 引用示例 -->
+<div class="flex gap-4 max-w-2xl ml-auto flex-row-reverse">
+<div class="w-10 h-10 bg-slate-100 rounded-2xl flex-shrink-0 flex items-center justify-center">
+<span class="iconify text-xl text-slate-500" data-icon="solar:user-bold"></span>
+</div>
+<div class="bg-[#8EB19D] p-4 rounded-2xl rounded-tr-none text-white shadow-lg shadow-[#8EB19D]/20">
+<p class="text-sm">Can you explain the GUR language requirements for 2024 intake?</p>
+</div>
+</div>
+<div class="flex gap-4 max-w-2xl">
+<div class="w-10 h-10 bg-indigo-100 rounded-2xl flex-shrink-0 flex items-center justify-center text-indigo-600">
+<span class="iconify text-xl" data-icon="solar:star-fall-2-bold-duotone"></span>
+</div>
+<div class="space-y-3">
+<div class="bg-slate-50 p-4 rounded-2xl rounded-tl-none border border-slate-100">
+<div class="flex items-center gap-2 mb-2">
+<span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-bold rounded uppercase">High Confidence</span>
+<span class="text-[10px] text-slate-400">Ref: AS_Handbook_v2024.pdf</span>
+</div>
+<p class="text-slate-700 text-sm leading-relaxed">According to your profile (2024 Entry), you must complete 6 credits of English Language and 3 credits of Chinese Language. Since you took EL1012 in sem 1, you only need...</p>
+<div class="mt-4 p-3 bg-white rounded-xl border border-slate-200 flex items-center gap-3">
+<div class="w-10 h-10 bg-slate-50 rounded-lg flex items-center justify-center">
+<span class="iconify text-xl text-indigo-400" data-icon="solar:document-bold"></span>
+</div>
+<div class="flex-1 overflow-hidden">
+<p class="text-xs font-bold text-slate-700 truncate">AS Handbook 2024 - Rev.2</p>
+<p class="text-[10px] text-slate-400">Page 45, Section 3.2.1</p>
+</div>
+<button class="p-1 hover:bg-slate-100 rounded"><span class="iconify" data-icon="solar:eye-bold"></span></button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<footer class="p-4 bg-white border-t border-slate-100">
+<div class="max-w-4xl mx-auto relative">
+<input id="chat-input" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-4 pr-32 focus:outline-none focus:ring-2 focus:ring-[#8EB19D]/20 focus:border-[#8EB19D] transition-all text-sm" placeholder="Type @ to tag documents or ask a question..." type="text"/>
+<div class="absolute right-2 top-2 flex gap-1">
+<button class="p-2.5 text-slate-400 hover:text-[#6B8E7B] hover:bg-white rounded-xl"><span class="iconify text-2xl" data-icon="solar:attachment-bold"></span></button>
+<button id="send-button" class="bg-[#6B8E7B] text-white p-2.5 rounded-xl hover:bg-[#5A7A69] shadow-md transition-all"><span class="iconify text-2xl" data-icon="solar:paper-plane-bold"></span></button>
+</div>
+</div>
+</footer>
+</section>
+</div>
+<!-- 2.2 Profile 页面 -->
+<div class="tab-content hidden h-full p-8 animate-slide-in overflow-y-auto w-full max-w-5xl mx-auto" id="tab-profile">
+<header class="mb-10">
+<h2 class="text-3xl font-black text-slate-900 text-content" data-en="Student Profile" data-zh="学生个人资料">Student Profile</h2>
+<p class="text-slate-500 mt-2 text-content" data-en="Ensure your records are up to date for accurate AI advising suggestions." data-zh="请确保资料准确，以便 AI 为您提供定制化的建议。">Ensure your records are up to date for accurate AI advising suggestions.</p>
+</header>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="lg:col-span-2 space-y-6">
+<div class="bg-white rounded-3xl p-8 border border-[#F5F8FA] shadow-sm space-y-8">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-xs font-bold text-slate-500 uppercase tracking-widest">Full Name</label>
+<input class="w-full border-2 border-slate-100 rounded-xl px-4 py-3 focus:border-[#6B8E7B] focus:ring-0 outline-none transition-all font-medium" type="text" value="Li Ming"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold text-slate-500 uppercase tracking-widest text-content" data-en="Student ID" data-zh="学号">Student ID</label>
+<input class="w-full border-2 border-slate-100 rounded-xl px-4 py-3 focus:border-[#6B8E7B] focus:ring-0 outline-none transition-all font-medium" type="text" value="23012345D"/>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-xs font-bold text-slate-500 uppercase tracking-widest text-content" data-en="Entry Year" data-zh="入学年份">Entry Year</label>
+<select class="w-full border-2 border-slate-100 rounded-xl px-4 py-3 focus:border-indigo-500 focus:ring-0 outline-none transition-all font-medium">
+<option>2023</option>
+<option selected="">2024</option>
+<option>2025</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold text-slate-500 uppercase tracking-widest text-content" data-en="Expected Graduation" data-zh="预计毕业时间">Expected Graduation</label>
+<input class="w-full border-2 border-slate-100 rounded-xl px-4 py-3 focus:border-indigo-500 focus:ring-0 outline-none transition-all font-medium" placeholder="YYYY/MM" type="text" value="2028/06"/>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="space-y-2">
+<label class="text-xs font-bold text-slate-500 uppercase tracking-widest text-content" data-en="Department" data-zh="所属部门">Department</label>
+<select class="w-full border-2 border-slate-100 rounded-xl px-4 py-3 focus:border-indigo-500 focus:ring-0 outline-none transition-all font-medium">
+<option selected="">Department of Computing</option>
+<option>School of Design</option>
+<option>Faculty of Business</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-bold text-slate-500 uppercase tracking-widest text-content" data-en="Major" data-zh="专业">Major</label>
+<input class="w-full border-2 border-slate-100 rounded-xl px-4 py-3 focus:border-indigo-500 focus:ring-0 outline-none transition-all font-medium" type="text" value="BSc (Hons) in Computing"/>
+</div>
+</div>
+<div class="pt-4 border-t border-slate-50 flex justify-end gap-3">
+<button class="px-6 py-2.5 rounded-xl text-slate-500 font-bold hover:bg-slate-50 transition-all text-content" data-en="Cancel" data-zh="取消">Cancel</button>
+<button class="px-8 py-2.5 rounded-xl bg-[#6B8E7B] text-white font-bold shadow-lg shadow-[#6B8E7B]/10 hover:bg-[#5A7A69] transition-all text-content" data-en="Save Changes" data-zh="保存修改">Save Changes</button>
+</div>
+</div>
+<div class="bg-[#6B8E7B] rounded-3xl p-8 text-white relative overflow-hidden shadow-xl">
+<div class="relative z-10">
+<h3 class="text-xl font-bold mb-2 text-content" data-en="Advising Intelligence" data-zh="智能辅助建议">Advising Intelligence</h3>
+<p class="text-[#E8F0EB] text-sm mb-6 text-content" data-en="Based on your profile, we've summarized your status." data-zh="基于您的档案，我们汇总了您的当前进度。">Based on your profile, we've summarized your status.</p>
+<div class="grid grid-cols-3 gap-4">
+<div class="bg-white/10 p-4 rounded-2xl border border-white/10 backdrop-blur">
+<p class="text-xs text-[#E8F0EB] mb-1">GPA</p>
+<p class="text-2xl font-black">3.72</p>
+</div>
+<div class="bg-white/10 p-4 rounded-2xl border border-white/10 backdrop-blur">
+<p class="text-xs text-[#E8F0EB] mb-1">Total Credits</p>
+<p class="text-2xl font-black">45 / 120</p>
+</div>
+<div class="bg-white/10 p-4 rounded-2xl border border-white/10 backdrop-blur">
+<p class="text-xs text-[#E8F0EB] mb-1">GUR Done</p>
+<p class="text-2xl font-black">60%</p>
+</div>
+</div>
+</div>
+<span class="iconify absolute -bottom-10 -right-10 text-[200px] text-white/5" data-icon="solar:chart-bold"></span>
+</div>
+</div>
+<div class="space-y-6">
+<div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm text-center">
+<div class="relative inline-block mb-4">
+<div class="w-32 h-32 bg-slate-100 rounded-full border-4 border-white shadow-md mx-auto flex items-center justify-center overflow-hidden">
+<img alt="Avatar ID 1" class="w-full h-full object-cover" id="img-1" src="https://modao.cc/agent-py/media/generated_images/2026-01-03/0eebdb43cffd4cd9b7c2fbff00947d1e.jpg">
+</img></div>
+<button class="absolute bottom-1 right-1 w-8 h-8 bg-[#6B8E7B] text-white rounded-full flex items-center justify-center shadow-lg border-2 border-white"><span class="iconify" data-icon="solar:camera-bold"></span></button>
+</div>
+<h4 class="font-bold text-slate-800 text-lg">Li Ming</h4>
+<p class="text-sm text-slate-400">Computer Science • Year 2</p>
+</div>
+<div class="bg-emerald-50 rounded-3xl p-6 border border-emerald-100 shadow-sm">
+<div class="flex items-center gap-3 mb-4">
+<div class="bg-emerald-100 p-2 rounded-xl text-emerald-600"><span class="iconify text-xl" data-icon="solar:heart-bold"></span></div>
+<h4 class="font-bold text-emerald-900 text-content" data-en="Wellness Note" data-zh="关怀提醒">Wellness Note</h4>
+</div>
+<p class="text-sm text-emerald-800 leading-relaxed mb-4 text-content" data-en="Lately you’ve asked questions about exam pressure. Our SAO support is always here for you." data-zh="最近您询问了较多考试压力相关问题，SAO 中心始终为您提供支持。">Lately you’ve asked questions about exam pressure. Our SAO support is always here for you.</p>
+<button class="w-full bg-white text-emerald-600 rounded-xl py-2 text-sm font-bold border border-emerald-200 hover:bg-emerald-100 transition-all text-content" data-en="Contact SAO" data-zh="联系 SAO">Contact SAO</button>
+</div>
+</div>
+</div>
+</div>
+<!-- 2.3 Tickets 页面 -->
+<div class="tab-content hidden h-full flex flex-col p-8 animate-slide-in overflow-y-auto" id="tab-tickets">
+<header class="mb-8 flex justify-between items-end">
+<div>
+<h2 class="text-3xl font-black text-slate-900 text-content" data-en="Issue Report and Contact Us" data-zh="问题反馈与联系我们">Issue Report and Contact Us</h2>
+<p class="text-slate-500 mt-2 text-content" data-en="Formal escalation when the AI advisor cannot solve your specific issue." data-zh="当 AI 无法解决特定复杂问题时，可在此提交人工申请。">Formal escalation when the AI advisor cannot solve your specific issue.</p>
+</div>
+<button class="px-6 py-3 bg-indigo-600 text-white rounded-2xl font-bold flex items-center gap-2 shadow-lg shadow-indigo-100 hover:scale-105 transition-all text-content" data-en="+ New Ticket" data-zh="+ 提交新工单">+ New Ticket</button>
+</header>
+<div class="grid grid-cols-1 gap-4">
+<!-- Ticket Item -->
+<div class="bg-white w-full rounded-2xl border border-slate-100 p-5 hover:border-indigo-200 transition-all shadow-sm group cursor-pointer">
+<div class="flex flex-wrap items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="p-3 bg-amber-50 rounded-2xl text-amber-500 group-hover:bg-amber-100 transition-colors">
+<span class="iconify text-2xl" data-icon="solar:shield-warning-bold-duotone"></span>
+</div>
+<div>
+<h4 class="font-bold text-slate-800 text-lg">Appeal for COMP3121 Credit Transfer</h4>
+<div class="flex items-center gap-3 mt-1 text-xs text-slate-400">
+<span class="flex items-center gap-1"><span class="iconify" data-icon="solar:users-group-rounded-bold"></span> Dept Office</span>
+<span>•</span>
+<span class="flex items-center gap-1 uppercase font-bold tracking-tighter">TIC-20260102-04</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="text-right">
+<p class="text-xs text-slate-400 mb-1 uppercase font-bold tracking-widest text-content" data-en="Last Update" data-zh="最后更新">Last Update</p>
+<p class="text-sm font-semibold text-slate-700">2026-01-03 09:12</p>
+</div>
+<div class="px-4 py-2 bg-amber-100 text-amber-700 rounded-xl text-xs font-black uppercase text-content" data-en="In Progress" data-zh="处理中">In Progress</div>
+<div class="hidden lg:block">
+<p class="text-xs text-slate-400 mb-1 uppercase font-bold tracking-widest">SLA Remainder</p>
+<p class="text-sm font-bold text-emerald-600">42h 15m</p>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-white w-full rounded-2xl border border-slate-100 p-5 hover:border-indigo-200 transition-all shadow-sm group cursor-pointer">
+<div class="flex flex-wrap items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="p-3 bg-emerald-50 rounded-2xl text-emerald-500 group-hover:bg-emerald-100 transition-colors">
+<span class="iconify text-2xl" data-icon="solar:check-circle-bold-duotone"></span>
+</div>
+<div>
+<h4 class="font-bold text-slate-800 text-lg">WIE Overseas Internship Subsidy Request</h4>
+<div class="flex items-center gap-3 mt-1 text-xs text-slate-400">
+<span class="flex items-center gap-1"><span class="iconify" data-icon="solar:users-group-rounded-bold"></span> GEO Office</span>
+<span>•</span>
+<span class="flex items-center gap-1 uppercase font-bold tracking-tighter">TIC-20251215-01</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="text-right">
+<p class="text-xs text-slate-400 mb-1 uppercase font-bold tracking-widest text-content" data-en="Completed" data-zh="已完成">Completed</p>
+<p class="text-sm font-semibold text-slate-700">2025-12-28 16:45</p>
+</div>
+<div class="px-4 py-2 bg-emerald-100 text-emerald-700 rounded-xl text-xs font-black uppercase text-content" data-en="Resolved" data-zh="已解决">Resolved</div>
+<div class="px-8 hidden lg:block opacity-0">SLA Placeholder</div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-8 bg-slate-50 border-2 border-slate-100 border-dashed rounded-3xl p-10 text-center">
+<div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-slate-300 mx-auto mb-4">
+<span class="iconify text-4xl" data-icon="solar:history-bold"></span>
+</div>
+<p class="text-slate-400 text-content" data-en="No more tickets in recent 30 days." data-zh="近 30 天内没有更多工单记录。">No more tickets in recent 30 days.</p>
+</div>
+</div>
+<!-- Placeholder for Resources/Settings -->
+<div class="tab-content hidden h-full flex flex-col items-center justify-center" id="tab-resources">
+<div class="text-center">
+<div class="w-24 h-24 bg-indigo-50 text-indigo-200 rounded-full flex items-center justify-center mx-auto mb-6">
+<span class="iconify text-5xl" data-icon="solar:notebook-bold-duotone"></span>
+</div>
+<h2 class="text-2xl font-bold text-slate-800">Policy Library</h2>
+<p class="text-slate-500 mt-2">Explore University guidelines and handbooks curated for 2026.</p>
+</div>
+</div>
+</main>
+</div>
+<script>
+        // 语言状态管理
+        let currentLang = 'en'; 
+
+        function toggleLanguage() {
+            // Language switching disabled for English-only version
+            console.log("Language switching is disabled in this version.");
+        }
+
+        // 标签切换管理
+        function switchTab(tabId) {
+            // 隐藏所有内容
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            // 显示选中内容
+            const target = document.getElementById(`tab-${tabId}`);
+            if(target) target.classList.remove('hidden');
+
+            // 更新导航样式
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                const id = btn.getAttribute('data-tab');
+                if(id === tabId) {
+                    btn.classList.add('bg-white/20', 'text-white');
+                    btn.classList.remove('hover:bg-white/5');
+                } else {
+                    btn.classList.remove('bg-white/20');
+                    btn.classList.add('text-white', 'hover:bg-white/5');
+                }
+            });
+        }
+
+        // 初始化
+        window.onload = () => {
+            // 设置默认页面
+            switchTab('chat');
+            // 初始化一些动态效果
+            console.log("Academic Advisor Platform Initialized - 2026/01/08");
+
+            // 简单聊天逻辑：调用后端 Dify API
+            const chatInput = document.getElementById('chat-input');
+            const sendButton = document.getElementById('send-button');
+            const chatContainer = document.getElementById('chat-messages');
+
+            async function sendMessage() {
+                const text = chatInput.value.trim();
+                if (!text) return;
+
+                appendUserMessage(text);
+                chatInput.value = '';
+
+                const loadingId = appendAssistantMessage('Thinking...');
+
+                try {
+                    const res = await fetch('http://localhost:5000/api/chat/dify', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ query: text })
+                    });
+
+                    const data = await res.json();
+
+                    const answer = data?.answer || data?.message || 'No response from advisor.';
+                    updateAssistantMessage(loadingId, answer);
+                } catch (err) {
+                    console.error(err);
+                    updateAssistantMessage(loadingId, 'Sorry, I could not reach the advising service. Please try again later.');
+                }
+            }
+
+            function appendUserMessage(text) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'flex gap-4 max-w-2xl ml-auto flex-row-reverse';
+                wrapper.innerHTML = `
+                    <div class="w-10 h-10 bg-slate-100 rounded-2xl flex-shrink-0 flex items-center justify-center">
+                        <span class="iconify text-xl text-slate-500" data-icon="solar:user-bold"></span>
+                    </div>
+                    <div class="bg-[#8EB19D] p-4 rounded-2xl rounded-tr-none text-white shadow-lg shadow-[#8EB19D]/20">
+                        <p class="text-sm"></p>
+                    </div>
+                `;
+                wrapper.querySelector('p').textContent = text;
+                chatContainer.appendChild(wrapper);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+
+            function appendAssistantMessage(text) {
+                const id = 'assistant-' + Date.now() + '-' + Math.random().toString(16).slice(2);
+                const wrapper = document.createElement('div');
+                wrapper.className = 'flex gap-4 max-w-2xl';
+                wrapper.id = id;
+                wrapper.innerHTML = `
+                    <div class="w-10 h-10 bg-[#E8F0EB] rounded-2xl flex-shrink-0 flex items-center justify-center text-[#6B8E7B]">
+                        <span class="iconify text-xl" data-icon="solar:star-fall-2-bold-duotone"></span>
+                    </div>
+                    <div class="bg-[#F5F8FA] p-4 rounded-2xl rounded-tl-none border border-[#E8F0EB]">
+                        <p class="text-slate-700 leading-relaxed text-sm"></p>
+                    </div>
+                `;
+                wrapper.querySelector('p').textContent = text;
+                chatContainer.appendChild(wrapper);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+                return id;
+            }
+
+            function updateAssistantMessage(id, text) {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const p = el.querySelector('p');
+                if (p) p.textContent = text;
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+
+            if (sendButton && chatInput) {
+                sendButton.addEventListener('click', sendMessage);
+                chatInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        sendMessage();
+                    }
+                });
+            }
+        };
+    </script>
+<style>
+        /* 自定义滚动条样式 */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+    </style>
+</body>
+</html>
