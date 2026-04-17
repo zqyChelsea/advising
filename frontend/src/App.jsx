@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { DarkModeProvider } from './contexts/DarkModeContext';
 import MainLayout from './components/layout/MainLayout';
 import Chat from './pages/Chat';
 import Profile from './pages/Profile';
@@ -7,6 +8,9 @@ import Tickets from './pages/Tickets';
 import Resources from './pages/Resources';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
+import PDFViewer from './pages/PDFViewer';
+import PRDViewer from './pages/PRDViewer';
+import StudentWellnessViewer from './pages/StudentWellnessViewer';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -27,17 +31,23 @@ const ProtectedRoute = ({ children }) => {
 
 function App() {
   return (
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/" element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
-            <Route index element={<Navigate to="/chat" replace />} />
-            <Route path="chat" element={<Chat />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="tickets" element={<Tickets />} />
-            <Route path="resources" element={<Resources />} />
+    <DarkModeProvider>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
+          <Route index element={<Navigate to="/chat" replace />} />
+          <Route path="chat" element={<Chat />} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="tickets" element={<Tickets />} />
+          <Route path="resources" element={<Resources />} />
+          <Route path="resources/student-handbook" element={<PDFViewer />} />
+            <Route path="resources/wie-handbook" element={<PDFViewer pdfPath="/sao_WIEHandbook.pdf" title="WIE Handbook" />} />
+            <Route path="resources/prd" element={<PRDViewer />} />
+            <Route path="resources/student-wellness" element={<StudentWellnessViewer />} />
             <Route path="settings" element={<Settings />} />
-          </Route>
-        </Routes>
+        </Route>
+      </Routes>
+    </DarkModeProvider>
   );
 }
 

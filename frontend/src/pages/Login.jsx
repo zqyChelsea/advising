@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const Login = () => {
   const navigate = useNavigate();
   const { login, register, user } = useAuth();
+  const { t } = useLanguage();
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     studentId: '',
@@ -33,11 +35,10 @@ const Login = () => {
     setLoading(true);
     setError('');
 
-    // Validate school email for registration
     if (!isLogin) {
       const emailRegex = /@connect\.polyu\.hk|@polyu\.edu\.hk$/i;
       if (!emailRegex.test(formData.email)) {
-        setError('Please enter your school email address (@connect.polyu.hk or @polyu.edu.hk)');
+        setError(t('login.emailError'));
         setLoading(false);
         return;
       }
@@ -51,7 +52,7 @@ const Login = () => {
       }
       navigate('/chat');
     } catch (err) {
-      setError(err.response?.data?.message || 'An error occurred. Please try again.');
+      setError(err.response?.data?.message || t('common.error'));
     } finally {
       setLoading(false);
     }
@@ -69,8 +70,8 @@ const Login = () => {
           <div className="w-20 h-20 bg-[#8EB19D] rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-[#8EB19D]/30">
             <span className="iconify text-5xl text-white" data-icon="flat-color-icons:graduation-cap"></span>
           </div>
-          <h1 className="text-2xl font-black text-[#2C3E50]">PolyU Advising</h1>
-          <p className="text-slate-500 mt-1">Your AI-powered academic companion</p>
+          <h1 className="text-2xl font-black text-[#2C3E50]">{t('login.title')}</h1>
+          <p className="text-slate-500 mt-1">{t('login.subtitle')}</p>
         </div>
 
         {/* Form Card */}
@@ -80,13 +81,13 @@ const Login = () => {
               className={`flex-1 py-3 rounded-xl font-bold transition-all ${isLogin ? 'bg-[#8EB19D] text-white' : 'text-slate-500 hover:bg-slate-50'}`}
               onClick={() => setIsLogin(true)}
             >
-              Login
+              {t('login.login')}
             </button>
             <button
               className={`flex-1 py-3 rounded-xl font-bold transition-all ${!isLogin ? 'bg-[#8EB19D] text-white' : 'text-slate-500 hover:bg-slate-50'}`}
               onClick={() => setIsLogin(false)}
             >
-              Register
+              {t('login.register')}
             </button>
           </div>
 
@@ -95,24 +96,24 @@ const Login = () => {
               <>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">First Name</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">{t('login.firstName')}</label>
                     <input
                       className="w-full border-2 border-slate-100 rounded-xl px-4 py-3 focus:border-[#8EB19D] focus:ring-0 outline-none transition-all font-medium"
                       type="text"
                       name="firstName"
-                      placeholder="Given name"
+                      placeholder={t('login.givenName')}
                       value={formData.firstName}
                       onChange={handleChange}
                       required={!isLogin}
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Family Name</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">{t('login.familyName')}</label>
                     <input
                       className="w-full border-2 border-slate-100 rounded-xl px-4 py-3 focus:border-[#8EB19D] focus:ring-0 outline-none transition-all font-medium"
                       type="text"
                       name="familyName"
-                      placeholder="Surname"
+                      placeholder={t('login.surname')}
                       value={formData.familyName}
                       onChange={handleChange}
                       required={!isLogin}
@@ -121,12 +122,12 @@ const Login = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Email</label>
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">{t('login.email')}</label>
                   <input
                     className="w-full border-2 border-slate-100 rounded-xl px-4 py-3 focus:border-[#8EB19D] focus:ring-0 outline-none transition-all font-medium"
                     type="email"
                     name="email"
-                    placeholder="your.email@connect.polyu.hk"
+                    placeholder={t('login.schoolEmail')}
                     value={formData.email}
                     onChange={handleChange}
                     required={!isLogin}
@@ -134,7 +135,7 @@ const Login = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Entry Year</label>
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">{t('login.entryYear')}</label>
                   <select
                     className="w-full border-2 border-slate-100 rounded-xl px-4 py-3 focus:border-[#8EB19D] focus:ring-0 outline-none transition-all font-medium"
                     name="entryYear"
@@ -151,12 +152,12 @@ const Login = () => {
             )}
 
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Student ID</label>
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">{t('login.studentId')}</label>
               <input
                 className="w-full border-2 border-slate-100 rounded-xl px-4 py-3 focus:border-[#8EB19D] focus:ring-0 outline-none transition-all font-medium"
                 type="text"
                 name="studentId"
-                placeholder="Enter your student ID"
+                placeholder={t('login.enterStudentId')}
                 value={formData.studentId}
                 onChange={handleChange}
                 required
@@ -164,13 +165,13 @@ const Login = () => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Password</label>
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">{t('login.password')}</label>
               <div className="relative">
               <input
                   className="w-full border-2 border-slate-100 rounded-xl px-4 py-3 pr-12 focus:border-[#8EB19D] focus:ring-0 outline-none transition-all font-medium"
                   type={showPassword ? "text" : "password"}
                 name="password"
-                placeholder="Enter your password"
+                placeholder={t('login.enterPassword')}
                 value={formData.password}
                 onChange={handleChange}
                 required
@@ -198,10 +199,10 @@ const Login = () => {
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <span className="animate-spin">⟳</span> Processing...
+                  <span className="animate-spin">⟳</span> {t('login.processing')}
                 </span>
               ) : (
-                isLogin ? 'Sign In' : 'Create Account'
+                isLogin ? t('login.signIn') : t('login.createAccount')
               )}
             </button>
           </form>
@@ -212,7 +213,7 @@ const Login = () => {
                 className="text-sm text-[#6B8E7B] hover:text-[#8EB19D] font-medium"
                 onClick={fillDemoCredentials}
               >
-                Use demo credentials
+                {t('login.useDemo')}
               </button>
             </div>
           )}
@@ -220,7 +221,7 @@ const Login = () => {
 
         {/* Footer */}
         <p className="text-center text-sm text-slate-400 mt-8">
-          By continuing, you agree to our Terms of Service and Privacy Policy
+          {t('login.terms')}
         </p>
       </div>
     </div>

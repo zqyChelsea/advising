@@ -19,8 +19,8 @@ const Profile = () => {
     studentId: '23012345D',
     entryYear: new Date().getFullYear(),
     expectedGraduation: '06/2028',
-    department: 'Department of Computing',
-    major: 'BSc (Hons) in Computing',
+    department: 'Computing',
+    major: 'BSc (Honours) Degree in Computer Science',
     avatar: ''
   });
 
@@ -83,19 +83,16 @@ const Profile = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
     if (!file.type.startsWith('image/')) {
-      alert('Please select an image file');
+      alert(t('profile.selectImageError'));
       return;
     }
 
-    // Validate file size (max 5MB for cropping, will be compressed after)
     if (file.size > 5 * 1024 * 1024) {
-      alert('Image size must be less than 5MB');
+      alert(t('profile.imageSizeError'));
       return;
     }
 
-    // Create a preview URL and open cropper
     const reader = new FileReader();
     reader.onload = (event) => {
       const result = event.target?.result;
@@ -104,11 +101,10 @@ const Profile = () => {
     };
     reader.onerror = () => {
       console.error('Error reading file');
-      alert('Error reading file');
+      alert(t('profile.errorReadingFile'));
     };
     reader.readAsDataURL(file);
 
-    // Reset input so same file can be selected again
     e.target.value = '';
   };
 
@@ -118,16 +114,13 @@ const Profile = () => {
     setIsUploading(true);
 
     try {
-      // Upload to backend
       const response = await api.put('/auth/avatar', { avatar: croppedImage });
-      
-      // Update local state
       setAvatarPreview(response.data.avatar);
       setUserData(prev => ({ ...prev, avatar: response.data.avatar }));
       updateUser({ avatar: response.data.avatar });
     } catch (error) {
       console.error('Error uploading avatar:', error);
-      alert(error.response?.data?.message || 'Error uploading avatar');
+      alert(error.response?.data?.message || t('profile.errorUploadingAvatar'));
     } finally {
       setIsUploading(false);
     }
@@ -141,7 +134,6 @@ const Profile = () => {
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      // Call backend API to save profile
       const response = await api.put('/auth/profile', {
         firstName: userData.firstName,
         familyName: userData.familyName,
@@ -149,12 +141,11 @@ const Profile = () => {
         department: userData.department,
         major: userData.major
       });
-      
       updateUser(response.data);
       setAvatarPreview(response.data.avatar || userData.avatar);
     } catch (error) {
       console.error('Error saving profile:', error);
-      alert(error.response?.data?.message || 'Error saving profile');
+      alert(error.response?.data?.message || t('profile.errorSavingProfile'));
     } finally {
       setIsSaving(false);
     }
@@ -252,25 +243,25 @@ const Profile = () => {
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">{t('profile.department')}</label>
                 <select
-                  className="w-full border-2 border-slate-100 rounded-xl px-4 py-3 focus:border-indigo-500 focus:ring-0 outline-none transition-all font-medium"
+                  className="w-full border-2 border-slate-100 rounded-xl px-4 py-3 focus:border-[#6B8E7B] focus:ring-0 outline-none transition-all font-medium"
                   name="department"
                   value={userData.department}
                   onChange={handleChange}
                 >
-                  <option value="Department of Computing">Department of Computing</option>
-                  <option value="School of Design">School of Design</option>
-                  <option value="Faculty of Business">Faculty of Business</option>
+                  <option value="Computing">Computing</option>
                 </select>
               </div>
               <div className="space-y-2">
                 <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">{t('profile.major')}</label>
-                <input
-                  className="w-full border-2 border-slate-100 rounded-xl px-4 py-3 focus:border-indigo-500 focus:ring-0 outline-none transition-all font-medium"
-                  type="text"
+                <select
+                  className="w-full border-2 border-slate-100 rounded-xl px-4 py-3 focus:border-[#6B8E7B] focus:ring-0 outline-none transition-all font-medium"
                   name="major"
                   value={userData.major}
                   onChange={handleChange}
-                />
+                >
+                  <option value="BSc (Honours) Degree in Computer Science">BSc (Honours) Degree in Computer Science</option>
+                  <option value="BSc (Honours) Degree in Enterprise Information Systems">BSc (Honours) Degree in Enterprise Information Systems</option>
+                </select>
               </div>
             </div>
 
@@ -360,7 +351,7 @@ const Profile = () => {
               </button>
             </div>
             <h4 className="font-bold text-slate-800 text-lg">{userData.firstName} {userData.familyName}</h4>
-            <p className="text-sm text-slate-400">Computer Science - Year 2</p>
+            <p className="text-sm text-slate-400">{t('profile.computerScience')} - {t('profile.year')} 2</p>
           </div>
 
           <div className="bg-emerald-50 rounded-3xl p-6 border border-emerald-100 shadow-sm">
@@ -368,14 +359,19 @@ const Profile = () => {
               <div className="bg-emerald-100 p-2 rounded-xl text-emerald-600">
                 <span className="iconify text-xl" data-icon="solar:heart-bold"></span>
               </div>
-              <h4 className="font-bold text-emerald-900">Wellness Note</h4>
+              <h4 className="font-bold text-emerald-900">{t('profile.wellnessNote')}</h4>
             </div>
             <p className="text-sm text-emerald-800 leading-relaxed mb-4">
-              Lately you've asked questions about exam pressure. Our SAO support is always here for you.
+              {t('profile.finalWeekApproaching')}
             </p>
-            <button className="w-full bg-white text-emerald-600 rounded-xl py-2 text-sm font-bold border border-emerald-200 hover:bg-emerald-100 transition-all">
-              Contact SAO
-            </button>
+            <a
+              href="https://www.polyu.edu.hk/sao/counselling-and-wellness-section/student-counselling/counselling/meeting-with-our-counsellors/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full bg-white text-emerald-600 rounded-xl py-2 text-sm font-bold border border-emerald-200 hover:bg-emerald-100 transition-all block text-center"
+            >
+              {t('profile.contactSAO')}
+            </a>
           </div>
         </div>
       </div>

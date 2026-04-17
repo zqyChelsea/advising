@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { sendChatMessage, getChatHistory, saveChatMessage, deleteChatSession } from '../services/api';
 
 const markdownComponents = {
@@ -46,7 +47,6 @@ const markdownComponents = {
   hr: () => <hr className="my-4 border-slate-200" />
 };
 
-/** Helps LLM output where bullets run on one line (colon or after a sentence). */
 function normalizeAssistantMarkdown(raw) {
   if (!raw || typeof raw !== 'string') return '';
   return raw
@@ -70,6 +70,7 @@ const CONVERSATION_ID_KEY = 'advising_conversationId';
 
 const Chat = () => {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -79,12 +80,10 @@ const Chat = () => {
   const messagesEndRef = useRef(null);
   const isInitializedRef = useRef(false);
 
-  // Scroll to bottom
   const scrollToBottom = (behavior = 'smooth') => {
     messagesEndRef.current?.scrollIntoView({ behavior });
   };
 
-  // Load greeting
   useEffect(() => {
     if (!user || isInitializedRef.current) return;
     isInitializedRef.current = true;
@@ -93,7 +92,7 @@ const Chat = () => {
     const greeting = {
       id: 1,
       role: 'assistant',
-      content: `Hi ${firstName}! I'm your Academic Advisor. I noticed that the subject registration period is approaching. Do you need me to help you check for GUR or WIE gaps for the Fall 2026 semester?`,
+      content: t('chat.greeting').replace('{name}', firstName),
       timestamp: new Date()
     };
 
@@ -122,19 +121,17 @@ const Chat = () => {
     } else {
       setMessages([greeting]);
     }
-  }, [user, sessionId, conversationId]);
+  }, [user, sessionId, conversationId, t]);
 
-  // Scroll on new messages
   useEffect(() => {
     if (messages.length > 0) {
       scrollToBottom();
     }
   }, [messages]);
 
-  // Generate a new session
   const startNewSession = () => {
     const newSid = String(Date.now());
-    const newCid = null; // Dify will assign
+    const newCid = null;
     localStorage.setItem(SESSION_ID_KEY, newSid);
     localStorage.setItem(CONVERSATION_ID_KEY, '');
     setSessionId(newSid);
@@ -154,7 +151,6 @@ const Chat = () => {
       timestamp: new Date()
     };
 
-    // Optimistic UI
     const currentSessionId = sessionId || String(Date.now());
     if (!sessionId) {
       localStorage.setItem(SESSION_ID_KEY, currentSessionId);
@@ -168,17 +164,13 @@ const Chat = () => {
     try {
       const data = await sendChatMessage(text, { conversationId: conversationId || undefined });
 
-      // Sync Dify conversationId back to localStorage
       const difyCid = data?.conversation_id;
       if (difyCid) {
         localStorage.setItem(CONVERSATION_ID_KEY, difyCid);
         setConversationId(difyCid);
       }
 
-      const aiContent =
-        data?.answer ||
-        data?.message ||
-        'The advisor did not return a response. Please try again.';
+      const aiContent = data?.answer || data?.message || t('chat.errorResponse');
 
       const aiMessage = {
         id: Date.now() + 1,
@@ -189,16 +181,12 @@ const Chat = () => {
 
       setMessages(prev => [...prev, aiMessage]);
 
-      // Persist to cloud (best effort)
       const sid = data?._sessionId || currentSessionId;
       await saveChatMessage({ sessionId: sid, role: 'user', content: text }).catch(() => {});
       await saveChatMessage({ sessionId: sid, role: 'assistant', content: aiContent }).catch(() => {});
     } catch (error) {
       console.error('Chat error:', error);
-      const errorText =
-        error?.response?.data?.message ||
-        error?.message ||
-        'Sorry, I could not reach the advising service. Please try again later.';
+      const errorText = error?.response?.data?.message || error?.message || t('chat.errorService');
 
       const aiMessage = {
         id: Date.now() + 1,
@@ -228,11 +216,11 @@ const Chat = () => {
               <span className="iconify text-2xl sm:text-3xl" data-icon="flat-color-icons:assistant"></span>
             </div>
             <div className="min-w-0">
-              <h3 className="font-bold text-[#2C3E50] text-base sm:text-lg truncate">PolyU Companion</h3>
+              <h3 className="font-bold text-[#2C3E50] text-base sm:text-lg truncate">{t('chat.title')}</h3>
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 bg-[#6BC4A6] rounded-full animate-pulse flex-shrink-0"></span>
                 <span className="text-[10px] sm:text-xs text-[#95A5A6] font-medium truncate">
-                  {conversationId ? '历史会话已加载' : '新会话'}
+                  {conversationId ? t('chat.historyLoaded') : t('chat.newSession')}
                 </span>
               </div>
             </div>
@@ -243,11 +231,11 @@ const Chat = () => {
               className="hidden sm:flex px-3 sm:px-5 py-2 sm:py-2.5 bg-[#F5F8FA] text-[#6B8E7B] rounded-xl text-xs sm:text-sm font-bold items-center gap-2 hover:bg-[#E8F0EB] transition-all border border-[#6B8E7B]/10"
             >
               <span className="iconify" data-icon="flat-color-icons:plus"></span>
-              <span className="hidden md:inline">New Chat</span>
+              <span className="hidden md:inline">{t('chat.newChat')}</span>
             </button>
             <button className="px-3 sm:px-5 py-2 sm:py-2.5 bg-[#6B8E7B] text-white rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 hover:bg-[#5A7A69] shadow-md transition-all">
               <span className="iconify" data-icon="flat-color-icons:template"></span>
-              <span className="hidden sm:inline">Report Issues</span>
+              <span className="hidden sm:inline">{t('chat.reportIssues')}</span>
             </button>
           </div>
         </header>
@@ -257,7 +245,7 @@ const Chat = () => {
           {isLoadingHistory && (
             <div className="flex justify-center py-4">
               <span className="iconify text-2xl text-[#6B8E7B] animate-spin" data-icon="solar:loading-bold"></span>
-              <span className="ml-2 text-sm text-slate-500">加载聊天记录...</span>
+              <span className="ml-2 text-sm text-slate-500">{t('chat.loadingHistory')}</span>
             </div>
           )}
 
@@ -299,9 +287,9 @@ const Chat = () => {
         {!isLoadingHistory && messages.length <= 1 && (
           <div className="px-6 pb-4 flex-shrink-0">
             <div className="flex flex-wrap gap-2">
-              <button onClick={() => handleQuickAction('Graduation Gap Check')} className="px-3 py-1.5 bg-white border border-slate-200 rounded-full text-xs font-semibold text-slate-600 hover:border-[#8EB19D] hover:text-[#6B8E7B] transition-all">Graduation Gap Check</button>
-              <button onClick={() => handleQuickAction('WIE Application')} className="px-3 py-1.5 bg-white border border-slate-200 rounded-full text-xs font-semibold text-slate-600 hover:border-[#8EB19D] hover:text-[#6B8E7B] transition-all">WIE Application</button>
-              <button onClick={() => handleQuickAction('Subject Choice Advice')} className="px-3 py-1.5 bg-white border border-slate-200 rounded-full text-xs font-semibold text-slate-600 hover:border-[#8EB19D] hover:text-[#6B8E7B] transition-all">Subject Choice Advice</button>
+              <button onClick={() => handleQuickAction('Graduation Gap Check')} className="px-3 py-1.5 bg-white border border-slate-200 rounded-full text-xs font-semibold text-slate-600 hover:border-[#8EB19D] hover:text-[#6B8E7B] transition-all">{t('chat.quickGraduationGap')}</button>
+              <button onClick={() => handleQuickAction('WIE Application')} className="px-3 py-1.5 bg-white border border-slate-200 rounded-full text-xs font-semibold text-slate-600 hover:border-[#8EB19D] hover:text-[#6B8E7B] transition-all">{t('chat.quickWIE')}</button>
+              <button onClick={() => handleQuickAction('Subject Choice Advice')} className="px-3 py-1.5 bg-white border border-slate-200 rounded-full text-xs font-semibold text-slate-600 hover:border-[#8EB19D] hover:text-[#6B8E7B] transition-all">{t('chat.quickSubjectChoice')}</button>
             </div>
           </div>
         )}
@@ -311,7 +299,7 @@ const Chat = () => {
           <div className="max-w-4xl mx-auto relative">
             <input
               className="w-full bg-slate-50 border border-slate-200 rounded-xl sm:rounded-2xl px-4 sm:px-5 py-3 sm:py-4 pr-24 sm:pr-32 focus:outline-none focus:ring-2 focus:ring-[#8EB19D]/20 focus:border-[#8EB19D] transition-all text-sm"
-              placeholder="输入问题，获取学术建议..."
+              placeholder={t('chat.placeholder')}
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -324,7 +312,7 @@ const Chat = () => {
               <button
                 className="bg-[#6B8E7B] text-white p-2 sm:p-2.5 rounded-xl hover:bg-[#5A7A69] shadow-md transition-all flex items-center justify-center"
                 onClick={handleSend}
-                aria-label="Send message"
+                aria-label={t('chat.send')}
               >
                 <span className="iconify text-xl sm:text-2xl" data-icon="solar:arrow-right-bold"></span>
               </button>

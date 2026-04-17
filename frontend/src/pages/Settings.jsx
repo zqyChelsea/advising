@@ -1,19 +1,29 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useDarkMode } from '../contexts/DarkModeContext';
 
 const Settings = () => {
   const { user, logout } = useAuth();
   const { t, language, setLanguage, languageNames } = useLanguage();
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
   const [settings, setSettings] = useState({
     notifications: true,
     emailUpdates: true,
-    darkMode: false,
+    darkMode: isDarkMode,
     language: language
   });
 
+  useEffect(() => {
+    setSettings(prev => ({ ...prev, darkMode: isDarkMode }));
+  }, [isDarkMode]);
+
   const handleToggle = (key) => {
-    setSettings(prev => ({ ...prev, [key]: !prev[key] }));
+    if (key === 'darkMode') {
+      toggleDarkMode();
+    } else {
+      setSettings(prev => ({ ...prev, [key]: !prev[key] }));
+    }
   };
 
   const handleLanguageChange = (e) => {
@@ -25,31 +35,31 @@ const Settings = () => {
   return (
     <div className="p-4 sm:p-6 lg:p-8 w-full max-w-4xl mx-auto animate-slide-in">
       <header className="mb-6 lg:mb-10">
-        <h2 className="text-2xl lg:text-3xl font-black text-slate-900">{t('settings.title')}</h2>
-        <p className="text-slate-500 mt-2 text-sm lg:text-base">{t('settings.subtitle')}</p>
+        <h2 className="text-2xl lg:text-3xl font-black text-slate-900 dark:text-dark-text">{t('settings.title')}</h2>
+        <p className="text-slate-500 mt-2 text-sm lg:text-base dark:text-dark-muted">{t('settings.subtitle')}</p>
       </header>
 
       <div className="space-y-6">
         {/* Notifications Section */}
-        <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
+        <div className="bg-white dark:bg-dark-card rounded-3xl p-6 border border-slate-100 dark:border-dark-border shadow-sm">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-[#F2F4F2] rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-[#F2F4F2] dark:bg-dark-border rounded-xl flex items-center justify-center">
               <span className="iconify text-xl text-[#6B8E7B]" data-icon="solar:bell-bold"></span>
             </div>
             <div>
-              <h3 className="font-bold text-slate-800">{t('settings.notifications')}</h3>
-              <p className="text-sm text-slate-500">{t('settings.notificationsDesc')}</p>
+              <h3 className="font-bold text-slate-800 dark:text-dark-text">{t('settings.notifications')}</h3>
+              <p className="text-sm text-slate-500 dark:text-dark-muted">{t('settings.notificationsDesc')}</p>
             </div>
           </div>
 
           <div className="space-y-4">
-            <div className="flex items-center justify-between py-3 border-b border-slate-50">
+            <div className="flex items-center justify-between py-3 border-b border-slate-50 dark:border-dark-border">
               <div>
-                <p className="font-medium text-slate-700">{t('settings.pushNotifications')}</p>
-                <p className="text-sm text-slate-500">{t('settings.pushNotificationsDesc')}</p>
+                <p className="font-medium text-slate-700 dark:text-dark-text">{t('settings.pushNotifications')}</p>
+                <p className="text-sm text-slate-500 dark:text-dark-muted">{t('settings.pushNotificationsDesc')}</p>
               </div>
               <button
-                className={`w-12 h-6 rounded-full transition-colors ${settings.notifications ? 'bg-[#6B8E7B]' : 'bg-slate-200'}`}
+                className={`w-12 h-6 rounded-full transition-colors ${settings.notifications ? 'bg-[#6B8E7B]' : 'bg-slate-200 dark:bg-dark-border'}`}
                 onClick={() => handleToggle('notifications')}
               >
                 <div className={`w-5 h-5 bg-white rounded-full shadow-md transform transition-transform ${settings.notifications ? 'translate-x-6' : 'translate-x-0.5'}`}></div>
@@ -58,11 +68,11 @@ const Settings = () => {
 
             <div className="flex items-center justify-between py-3">
               <div>
-                <p className="font-medium text-slate-700">{t('settings.emailUpdates')}</p>
-                <p className="text-sm text-slate-500">{t('settings.emailUpdatesDesc')}</p>
+                <p className="font-medium text-slate-700 dark:text-dark-text">{t('settings.emailUpdates')}</p>
+                <p className="text-sm text-slate-500 dark:text-dark-muted">{t('settings.emailUpdatesDesc')}</p>
               </div>
               <button
-                className={`w-12 h-6 rounded-full transition-colors ${settings.emailUpdates ? 'bg-[#6B8E7B]' : 'bg-slate-200'}`}
+                className={`w-12 h-6 rounded-full transition-colors ${settings.emailUpdates ? 'bg-[#6B8E7B]' : 'bg-slate-200 dark:bg-dark-border'}`}
                 onClick={() => handleToggle('emailUpdates')}
               >
                 <div className={`w-5 h-5 bg-white rounded-full shadow-md transform transition-transform ${settings.emailUpdates ? 'translate-x-6' : 'translate-x-0.5'}`}></div>
@@ -72,25 +82,25 @@ const Settings = () => {
         </div>
 
         {/* Appearance Section */}
-        <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
+        <div className="bg-white dark:bg-dark-card rounded-3xl p-6 border border-slate-100 dark:border-dark-border shadow-sm">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-[#F2F4F2] rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-[#F2F4F2] dark:bg-dark-border rounded-xl flex items-center justify-center">
               <span className="iconify text-xl text-[#6B8E7B]" data-icon="solar:pallete-bold"></span>
             </div>
             <div>
-              <h3 className="font-bold text-slate-800">{t('settings.appearance')}</h3>
-              <p className="text-sm text-slate-500">{t('settings.appearanceDesc')}</p>
+              <h3 className="font-bold text-slate-800 dark:text-dark-text">{t('settings.appearance')}</h3>
+              <p className="text-sm text-slate-500 dark:text-dark-muted">{t('settings.appearanceDesc')}</p>
             </div>
           </div>
 
           <div className="space-y-4">
-            <div className="flex items-center justify-between py-3 border-b border-slate-50">
+            <div className="flex items-center justify-between py-3 border-b border-slate-50 dark:border-dark-border">
               <div>
-                <p className="font-medium text-slate-700">{t('settings.darkMode')}</p>
-                <p className="text-sm text-slate-500">{t('settings.darkModeDesc')}</p>
+                <p className="font-medium text-slate-700 dark:text-dark-text">{t('settings.darkMode')}</p>
+                <p className="text-sm text-slate-500 dark:text-dark-muted">{t('settings.darkModeDesc')}</p>
               </div>
               <button
-                className={`w-12 h-6 rounded-full transition-colors ${settings.darkMode ? 'bg-[#6B8E7B]' : 'bg-slate-200'}`}
+                className={`w-12 h-6 rounded-full transition-colors ${settings.darkMode ? 'bg-[#6B8E7B]' : 'bg-slate-200 dark:bg-dark-border'}`}
                 onClick={() => handleToggle('darkMode')}
               >
                 <div className={`w-5 h-5 bg-white rounded-full shadow-md transform transition-transform ${settings.darkMode ? 'translate-x-6' : 'translate-x-0.5'}`}></div>
@@ -99,11 +109,11 @@ const Settings = () => {
 
             <div className="flex items-center justify-between py-3">
               <div>
-                <p className="font-medium text-slate-700">{t('settings.language')}</p>
-                <p className="text-sm text-slate-500">{t('settings.languageDesc')}</p>
+                <p className="font-medium text-slate-700 dark:text-dark-text">{t('settings.language')}</p>
+                <p className="text-sm text-slate-500 dark:text-dark-muted">{t('settings.languageDesc')}</p>
               </div>
               <select
-                className="border-2 border-slate-100 rounded-xl px-4 py-2 focus:border-[#6B8E7B] outline-none"
+                className="border-2 border-slate-100 dark:border-dark-border rounded-xl px-4 py-2 focus:border-[#6B8E7B] outline-none bg-white dark:bg-dark-bg text-slate-700 dark:text-dark-text"
                 value={settings.language}
                 onChange={handleLanguageChange}
               >
@@ -116,41 +126,41 @@ const Settings = () => {
         </div>
 
         {/* Account Section */}
-        <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
+        <div className="bg-white dark:bg-dark-card rounded-3xl p-6 border border-slate-100 dark:border-dark-border shadow-sm">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-[#F2F4F2] rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-[#F2F4F2] dark:bg-dark-border rounded-xl flex items-center justify-center">
               <span className="iconify text-xl text-[#6B8E7B]" data-icon="solar:user-circle-bold"></span>
             </div>
             <div>
-              <h3 className="font-bold text-slate-800">{t('settings.account')}</h3>
-              <p className="text-sm text-slate-500">{t('settings.accountDesc')}</p>
+              <h3 className="font-bold text-slate-800 dark:text-dark-text">{t('settings.account')}</h3>
+              <p className="text-sm text-slate-500 dark:text-dark-muted">{t('settings.accountDesc')}</p>
             </div>
           </div>
 
           <div className="space-y-4">
-            <button className="w-full text-left px-4 py-3 rounded-xl hover:bg-slate-50 transition-colors flex items-center justify-between group">
+            <button className="w-full text-left px-4 py-3 rounded-xl hover:bg-slate-50 dark:hover:bg-dark-border transition-colors flex items-center justify-between group">
               <div className="flex items-center gap-3">
                 <span className="iconify text-xl text-slate-400 group-hover:text-[#6B8E7B]" data-icon="solar:key-bold"></span>
-                <span className="font-medium text-slate-700">{t('settings.changePassword')}</span>
+                <span className="font-medium text-slate-700 dark:text-dark-text">{t('settings.changePassword')}</span>
               </div>
               <span className="iconify text-xl text-slate-300 group-hover:text-[#6B8E7B]" data-icon="solar:arrow-right-bold"></span>
             </button>
 
-            <button className="w-full text-left px-4 py-3 rounded-xl hover:bg-slate-50 transition-colors flex items-center justify-between group">
+            <button className="w-full text-left px-4 py-3 rounded-xl hover:bg-slate-50 dark:hover:bg-dark-border transition-colors flex items-center justify-between group">
               <div className="flex items-center gap-3">
                 <span className="iconify text-xl text-slate-400 group-hover:text-[#6B8E7B]" data-icon="solar:download-bold"></span>
-                <span className="font-medium text-slate-700">{t('settings.exportData')}</span>
+                <span className="font-medium text-slate-700 dark:text-dark-text">{t('settings.exportData')}</span>
               </div>
               <span className="iconify text-xl text-slate-300 group-hover:text-[#6B8E7B]" data-icon="solar:arrow-right-bold"></span>
             </button>
 
             <button
-              className="w-full text-left px-4 py-3 rounded-xl hover:bg-red-50 transition-colors flex items-center justify-between group"
+              className="w-full text-left px-4 py-3 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors flex items-center justify-between group"
               onClick={logout}
             >
               <div className="flex items-center gap-3">
                 <span className="iconify text-xl text-red-400 group-hover:text-red-500" data-icon="solar:logout-bold"></span>
-                <span className="font-medium text-red-600">{t('settings.signOut')}</span>
+                <span className="font-medium text-red-600 dark:text-red-400">{t('settings.signOut')}</span>
               </div>
               <span className="iconify text-xl text-red-300 group-hover:text-red-500" data-icon="solar:arrow-right-bold"></span>
             </button>
@@ -159,8 +169,8 @@ const Settings = () => {
 
         {/* App Info */}
         <div className="text-center py-4">
-          <p className="text-sm text-slate-400">{t('settings.version')}</p>
-          <p className="text-xs text-slate-300 mt-1">{t('settings.academicYear')}</p>
+          <p className="text-sm text-slate-400 dark:text-dark-muted">{t('settings.version')}</p>
+          <p className="text-xs text-slate-300 dark:text-dark-muted mt-1 opacity-60">{t('settings.academicYear')}</p>
         </div>
       </div>
     </div>

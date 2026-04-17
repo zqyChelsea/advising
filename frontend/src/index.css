@@ -42,6 +42,10 @@ body {
   background: rgba(255, 255, 255, 0.7);
 }
 
+.dark .glass-morphism {
+  background: rgba(22, 33, 62, 0.8);
+}
+
 /* Safe area padding for mobile devices */
 .safe-area-pb {
   padding-bottom: env(safe-area-inset-bottom, 0);
@@ -65,6 +69,14 @@ body {
   background: #cbd5e1;
 }
 
+.dark ::-webkit-scrollbar-thumb {
+  background: #4a5568;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #718096;
+}
+
 /* Responsive breakpoint utilities */
 @media (max-width: 1024px) {
   .responsive-grid {
@@ -78,4 +90,404 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+}
+
+/* ==========================================
+   Dark Mode Styles
+   ========================================== */
+
+/* Base dark mode */
+.dark {
+  --color-bg: #1a1a2e;
+  --color-card: #16213e;
+  --color-border: #2d3748;
+  --color-text: #e2e8f0;
+  --color-muted: #a0aec0;
+}
+
+/* Background colors */
+.dark body,
+.dark body.bg-\[\#F2F4F2\] {
+  background-color: #1a1a2e !important;
+}
+
+/* Card backgrounds */
+.dark .bg-white {
+  background-color: #16213e !important;
+}
+
+.dark .bg-\[\#F5F8FA\] {
+  background-color: #1e2a47 !important;
+}
+
+.dark .bg-\[\#F2F4F2\] {
+  background-color: #1a1a2e !important;
+}
+
+.dark .bg-slate-50,
+.dark .bg-slate-100 {
+  background-color: #1e2a47 !important;
+}
+
+.dark .bg-emerald-50 {
+  background-color: #1a2e2a !important;
+}
+
+.dark .bg-amber-50 {
+  background-color: #2a2a1a !important;
+}
+
+.dark .bg-purple-50 {
+  background-color: #2a1a2a !important;
+}
+
+.dark .bg-rose-50 {
+  background-color: #2a1a1e !important;
+}
+
+.dark .bg-pink-50 {
+  background-color: #2a1a2a !important;
+}
+
+.dark .bg-blue-50 {
+  background-color: #1a1a2a !important;
+}
+
+/* Border colors */
+.dark .border-slate-100,
+.dark .border-slate-200,
+.dark .border-slate-300 {
+  border-color: #2d3748 !important;
+}
+
+.dark .border-\[\#F5F8FA\] {
+  border-color: #2d3748 !important;
+}
+
+/* Text colors */
+.dark .text-slate-900,
+.dark .text-slate-800,
+.dark .text-slate-700 {
+  color: #e2e8f0 !important;
+}
+
+.dark .text-slate-600 {
+  color: #a0aec0 !important;
+}
+
+.dark .text-slate-500 {
+  color: #94a3b8 !important;
+}
+
+.dark .text-slate-400 {
+  color: #718096 !important;
+}
+
+/* Dark mode specific text */
+.dark .text-dark-bg {
+  color: #e2e8f0;
+}
+
+.dark .text-dark-muted {
+  color: #a0aec0;
+}
+
+/* Card with border hover */
+.dark .hover\:border-\[\#8EB19D\]\/30:hover {
+  border-color: #6B8E7B !important;
+}
+
+/* Primary color adjustments for dark mode */
+.dark .text-\[\#2C3E50\] {
+  color: #e2e8f0 !important;
+}
+
+.dark .text-\[\#6B8E7B\] {
+  color: #8EB19D !important;
+}
+
+.dark .text-\[\#5A7A69\] {
+  color: #7B9D8A !important;
+}
+
+.dark .text-emerald-900 {
+  color: #d1fae5 !important;
+}
+
+.dark .text-emerald-800 {
+  color: #a7f3d0 !important;
+}
+
+.dark .text-emerald-600 {
+  color: #6ee7b7 !important;
+}
+
+/* Background overlays */
+.dark .bg-\[\#E8F0EB\] {
+  background-color: #1e3a3a !important;
+}
+
+.dark .bg-\[\#6B8E7B\] {
+  background-color: #5a7a6b !important;
+}
+
+/* Input fields in dark mode */
+.dark input,
+.dark select,
+.dark textarea {
+  background-color: #1e2a47;
+  color: #e2e8f0;
+  border-color: #2d3748;
+}
+
+.dark input:focus,
+.dark select:focus,
+.dark textarea:focus {
+  border-color: #6B8E7B;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #718096;
+}
+
+.dark input:disabled,
+.dark input\.bg-slate-50 {
+  background-color: #16213e !important;
+}
+
+/* Modal/Overlay */
+.dark .bg-black\/50 {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Gradient cards */
+.dark .bg-gradient-to-r {
+  --tw-gradient-from: #16213e;
+  --tw-gradient-to: #1e2a47;
+}
+
+/* Switch toggle in dark mode */
+.dark .bg-slate-200 {
+  background-color: #4a5568 !important;
+}
+
+/* PDF viewer dark mode */
+.dark .bg-slate-100.dark\:bg-slate-800 {
+  background-color: #1e2a47 !important;
+}
+
+/* Status badges */
+.dark .bg-emerald-100 {
+  background-color: #064e3b !important;
+}
+
+.dark .bg-amber-100 {
+  background-color: #78350f !important;
+}
+
+.dark .bg-red-500 {
+  background-color: #dc2626 !important;
+}
+
+/* Chat bubbles */
+.dark .bg-\[\#8EB19D\] {
+  background-color: #6B8E7B !important;
+}
+
+.dark .text-white {
+  color: #f8fafc !important;
+}
+
+/* Links */
+.dark a {
+  color: #8EB19D;
+}
+
+/* Focus outlines */
+.dark *:focus {
+  outline-color: #6B8E7B;
+}
+
+/* Code blocks */
+.dark pre,
+.dark code {
+  background-color: #1e2a47 !important;
+  color: #e2e8f0 !important;
+}
+
+/* Animations */
+.dark .animate-pulse {
+  --tw-text-opacity: 1;
+}
+
+/* Loading spinner */
+.dark .animate-spin {
+  color: #8EB19D;
+}
+
+/* Sidebar/Nav in dark mode */
+.dark nav,
+.dark .bg-white\/90 {
+  background-color: rgba(22, 33, 62, 0.95) !important;
+}
+
+/* Chat page dark mode */
+.dark .bg-slate-50\/50 {
+  background-color: rgba(30, 42, 71, 0.5) !important;
+}
+
+/* PDF viewer container dark mode */
+.dark .bg-slate-100 {
+  background-color: #1e2a47 !important;
+}
+
+/* White cards on dark background */
+.dark .rounded-3xl.dark\:rounded-3xl {
+  background-color: #16213e;
+}
+
+/* Nav active states */
+.dark .from-\[\#8EB19D\]\.dark\:from-\[\#5a7a6b\] {
+  --tw-gradient-from: #5a7a6b;
+}
+
+/* PRD Viewer sidebar */
+.dark .border-r {
+  border-color: #2d3748 !important;
+}
+
+/* Bottom nav dark mode */
+.dark .bg-\[\#8EB19D\] {
+  background-color: #5a7a6b !important;
+}
+
+/* Emerald gradient cards in dark mode */
+.dark .bg-emerald-50 {
+  background-color: rgba(6, 78, 59, 0.5) !important;
+  border-color: rgba(6, 78, 59, 0.8) !important;
+}
+
+.dark .text-emerald-900 {
+  color: #a7f3d0 !important;
+}
+
+.dark .text-emerald-800 {
+  color: #6ee7b7 !important;
+}
+
+.dark .bg-emerald-100 {
+  background-color: rgba(6, 78, 59, 0.6) !important;
+}
+
+.dark .border-emerald-200 {
+  border-color: rgba(6, 78, 59, 0.6) !important;
+}
+
+/* Amber accent in dark mode */
+.dark .bg-amber-50 {
+  background-color: rgba(120, 53, 15, 0.5) !important;
+}
+
+/* Purple accent in dark mode */
+.dark .bg-purple-50 {
+  background-color: rgba(88, 28, 135, 0.3) !important;
+}
+
+/* Rose accent in dark mode */
+.dark .bg-rose-50 {
+  background-color: rgba(136, 19, 55, 0.3) !important;
+}
+
+/* Pink accent in dark mode */
+.dark .bg-pink-50 {
+  background-color: rgba(131, 24, 67, 0.3) !important;
+}
+
+/* Blue accent in dark mode */
+.dark .bg-blue-50 {
+  background-color: rgba(30, 58, 138, 0.3) !important;
+}
+
+/* Icon colors in dark mode */
+.dark .text-blue-500 {
+  color: #60a5fa !important;
+}
+
+.dark .text-emerald-500 {
+  color: #34d399 !important;
+}
+
+.dark .text-amber-500 {
+  color: #fbbf24 !important;
+}
+
+.dark .text-purple-500 {
+  color: #a78bfa !important;
+}
+
+.dark .text-rose-500 {
+  color: #fb7185 !important;
+}
+
+.dark .text-pink-500 {
+  color: #f472b6 !important;
+}
+
+/* Selection highlight */
+.dark ::selection {
+  background-color: #6B8E7B;
+  color: #ffffff;
+}
+
+/* Primary brand color variations for dark mode */
+.dark .bg-\[\#6BC4A6\] {
+  background-color: #34d399 !important;
+}
+
+/* Tab/button group dark mode */
+.dark .text-slate-500 {
+  color: #94a3b8 !important;
+}
+
+/* Input fields dark mode */
+.dark input[type="number"] {
+  background-color: #1e2a47;
+  color: #e2e8f0;
+  border-color: #4a5568;
+}
+
+/* Range slider in dark mode */
+.dark input[type="range"] {
+  background-color: #4a5568;
+}
+
+/* Checkbox in dark mode */
+.dark input[type="checkbox"] {
+  accent-color: #6B8E7B;
+}
+
+/* Login page dark mode */
+.dark .min-h-screen {
+  background-color: #1a1a2e !important;
+}
+
+/* Profile page dark mode */
+.dark .rounded-full {
+  background-color: #1e2a47;
+}
+
+/* Selected state in PRD list */
+.dark .bg-white\/20 {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Tooltip */
+.dark [title] {
+  color: #a0aec0;
+}
+
+/* Iconify icons in dark mode - ensure visibility */
+.dark .iconify {
+  color: inherit;
 }

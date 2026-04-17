@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Wellness Resources · PolyU</title>
+  <meta name="description" content="A warm, friendly guide to PolyU's student wellness, counselling, and mental-health support — find someone to talk to, an app for your pocket, or a hotline that's open right now." />
+  <meta property="og:title" content="Student Wellness Resources · PolyU" />
+  <meta property="og:description" content="Your gentle guide to counselling, wellness, and mental health support at The Hong Kong Polytechnic University." />
+
+  <!-- Fonts: Fraunces (warm display serif) + DM Sans (rounded friendly body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23F4A88B'/%3E%3Cpath d='M16 22c-3 0-5-2-5-2s2 4 5 4 5-4 5-4-2 2-5 2zM12 13a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm8 0a1.5 1.5 0 110 3 1.5 1.5 0 010-3z' fill='%23362e2a'/%3E%3C/svg%3E" />
+</head>
+<body>
+  <!-- Soft floating shapes background -->
+  <div class="bg-shapes" aria-hidden="true">
+    <span class="blob blob--1"></span>
+    <span class="blob blob--2"></span>
+    <span class="blob blob--3"></span>
+    <span class="blob blob--4"></span>
+  </div>
+
+  <header class="site-header">
+    <a href="#top" class="brand" aria-label="Student Wellness Resources home">
+      <svg class="brand__mark" width="36" height="36" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+        <path d="M20 34c-9 0-14-7-14-13a7 7 0 0 1 12-5 7 7 0 0 1 12 5c0 6-5 13-10 13z" fill="currentColor" />
+        <circle cx="15" cy="17" r="1.6" fill="#fff"/>
+        <circle cx="25" cy="17" r="1.6" fill="#fff"/>
+        <path d="M15 22c1.5 1.5 3.5 1.5 5 0" stroke="#fff" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+      </svg>
+      <span class="brand__text">Wellness <em>at PolyU</em></span>
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <a href="#talk">Talk to someone</a>
+      <a href="#self">Self-care</a>
+      <a href="#urgent">Urgent help</a>
+      <a href="#community">Community</a>
+    </nav>
+    <button class="theme-toggle" data-theme-toggle aria-label="Switch to dark mode">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero__inner">
+        <span class="hero__eyebrow">
+          <span class="dot"></span>
+          You are not alone — and help is closer than you think
+        </span>
+        <h1 class="hero__title">
+          A gentle place to find <em>support</em>,<br/>
+          <em>care</em>, and a kind ear.
+        </h1>
+        <p class="hero__lede">
+          A warm collection of wellness resources from The Hong Kong Polytechnic University — counselling, mindful tools, peer support, and emergency hotlines. Whatever you're carrying today, there's something here for you.
+        </p>
+        <div class="hero__ctas">
+          <a class="btn btn--primary" href="#talk">
+            <span>I'd like to talk to someone</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </a>
+          <a class="btn btn--ghost" href="#urgent">In urgent need →</a>
+        </div>
+
+        <div class="hero__cards">
+          <div class="mini-card">
+            <span class="mini-card__icon" style="background:#FFE5D6;">☎️</span>
+            <div>
+              <p class="mini-card__label">After-hours hotline</p>
+              <p class="mini-card__value"><a href="tel:81001583">8100 1583</a></p>
+            </div>
+          </div>
+          <div class="mini-card">
+            <span class="mini-card__icon" style="background:#E5EFE0;">💬</span>
+            <div>
+              <p class="mini-card__label">Counselling office</p>
+              <p class="mini-card__value"><a href="tel:27666800">2766 6800</a></p>
+            </div>
+          </div>
+          <div class="mini-card">
+            <span class="mini-card__icon" style="background:#FFEFC7;">🚨</span>
+            <div>
+              <p class="mini-card__label">Campus 24-hr security</p>
+              <p class="mini-card__value"><a href="tel:27667999">2766 7999</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Decorative friendly illustration -->
+      <div class="hero__art" aria-hidden="true">
+        <svg viewBox="0 0 400 400" width="100%" height="100%">
+          <defs>
+            <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#FFD9C2"/>
+              <stop offset="100%" stop-color="#F4A88B"/>
+            </linearGradient>
+          </defs>
+          <circle cx="200" cy="200" r="160" fill="url(#sky)"/>
+          <!-- clouds -->
+          <ellipse cx="120" cy="150" rx="34" ry="14" fill="#fff" opacity=".85"/>
+          <ellipse cx="290" cy="120" rx="44" ry="16" fill="#fff" opacity=".85"/>
+          <ellipse cx="280" cy="260" rx="30" ry="12" fill="#fff" opacity=".75"/>
+          <!-- two friends hugging -->
+          <g transform="translate(140 180)">
+            <ellipse cx="60" cy="160" rx="80" ry="14" fill="#000" opacity=".08"/>
+            <!-- left person -->
+            <path d="M30 90c0-20 14-32 30-32s30 12 30 32v50c0 6-4 10-10 10H40c-6 0-10-4-10-10z" fill="#7A9E7E"/>
+            <circle cx="60" cy="60" r="22" fill="#FBC9A8"/>
+            <path d="M48 60c2-8 22-8 24 0" stroke="#3A2E28" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <circle cx="54" cy="58" r="1.6" fill="#3A2E28"/>
+            <circle cx="66" cy="58" r="1.6" fill="#3A2E28"/>
+            <!-- right person hugging -->
+            <path d="M90 80c0-18 14-30 30-30s30 12 30 30v60c0 6-4 10-10 10h-40c-6 0-10-4-10-10z" fill="#E3A0A8"/>
+            <circle cx="120" cy="55" r="20" fill="#EBB28C"/>
+            <path d="M110 56c2-7 18-7 20 0" stroke="#3A2E28" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <circle cx="114" cy="54" r="1.5" fill="#3A2E28"/>
+            <circle cx="126" cy="54" r="1.5" fill="#3A2E28"/>
+            <!-- arms wrapping -->
+            <path d="M40 110 q40 -10 80 0" stroke="#7A9E7E" stroke-width="14" fill="none" stroke-linecap="round"/>
+          </g>
+          <!-- tiny hearts -->
+          <path d="M90 90c0-4 6-6 8-2 2-4 8-2 8 2 0 5-8 9-8 9s-8-4-8-9z" fill="#E3666F"/>
+          <path d="M310 200c0-3 5-5 7-2 2-3 7-1 7 2 0 4-7 7-7 7s-7-3-7-7z" fill="#E3666F"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- TALK TO SOMEONE -->
+    <section id="talk" class="section">
+      <header class="section__head">
+        <span class="section__kicker">Counselling & one-on-one care</span>
+        <h2 class="section__title">When you'd like to <em>talk to someone</em></h2>
+        <p class="section__lede">Counsellors at the Student Affairs Office are here to listen, with no judgement and full confidentiality. The service is completely free for PolyU students.</p>
+      </header>
+
+      <div class="cards-grid">
+        <a class="card card--peach" href="https://www.polyu.edu.hk/sao/counselling-and-wellness-section/student-counselling/counselling/what-is-student-counselling/" target="_blank" rel="noopener">
+          <div class="card__top">
+            <span class="card__emoji" aria-hidden="true">🌷</span>
+            <span class="card__tag">Free & confidential</span>
+          </div>
+          <h3 class="card__title">Student Counselling Service</h3>
+          <p class="card__desc">A safe, judgement-free space with trained counsellors who'll listen and walk with you through whatever you're facing.</p>
+          <span class="card__cta">Learn more <span aria-hidden="true">→</span></span>
+        </a>
+
+        <a class="card card--mint" href="https://www.polyu.edu.hk/sao/counselling-and-wellness-section/student-counselling/counselling/meeting-with-our-counsellors/" target="_blank" rel="noopener">
+          <div class="card__top">
+            <span class="card__emoji" aria-hidden="true">📅</span>
+            <span class="card__tag">Book an appointment</span>
+          </div>
+          <h3 class="card__title">Meet a Counsellor</h3>
+          <p class="card__desc">Book online, by phone, by email, or just walk in to QT308 (Chow Yei Ching Building, Core T entrance).</p>
+          <span class="card__cta">How to book <span aria-hidden="true">→</span></span>
+        </a>
+
+        <a class="card card--lemon" href="https://www.polyu.edu.hk/sao/counselling-and-wellness-section/student-counselling/mental-health-educational-material-or-resources/mental-wellness/" target="_blank" rel="noopener">
+          <div class="card__top">
+            <span class="card__emoji" aria-hidden="true">🧠</span>
+            <span class="card__tag">Self-knowledge</span>
+          </div>
+          <h3 class="card__title">Mental Health Resources</h3>
+          <p class="card__desc">A library of self-help articles and gentle strategies to understand what you're feeling and try small things that help.</p>
+          <span class="card__cta">Browse resources <span aria-hidden="true">→</span></span>
+        </a>
+
+        <a class="card card--lavender" href="https://www.polyu.edu.hk/sao/news-and-events/sao-annual-highlights-2122/counselling-wellness/" target="_blank" rel="noopener">
+          <div class="card__top">
+            <span class="card__emoji" aria-hidden="true">🤖</span>
+            <span class="card__tag">24/7 chatbot</span>
+          </div>
+          <h3 class="card__title">Integrated Counselling Service</h3>
+          <p class="card__desc">An online ChatBOT available any hour of the day to help you find the kind of support that fits your needs right now.</p>
+          <span class="card__cta">Start a chat <span aria-hidden="true">→</span></span>
+        </a>
+      </div>
+    </section>
+
+    <!-- SELF-CARE & APPS -->
+    <section id="self" class="section section--alt">
+      <header class="section__head">
+        <span class="section__kicker">Tools for your everyday</span>
+        <h2 class="section__title">Little practices for <em>everyday wellness</em></h2>
+        <p class="section__lede">Pocket-sized tools, gentle workshops, and a body that feels good — wellness lives in tiny, repeatable moments.</p>
+      </header>
+
+      <div class="feature-grid">
+        <article class="feature feature--lg">
+          <div class="feature__visual" style="background: linear-gradient(135deg,#FFE2D1,#FBB89A);">
+            <svg viewBox="0 0 200 200" width="180" height="180" aria-hidden="true">
+              <circle cx="100" cy="100" r="70" fill="#fff" opacity=".5"/>
+              <circle cx="100" cy="100" r="48" fill="#fff"/>
+              <text x="100" y="92" text-anchor="middle" font-size="34" fill="#C45D38">🌱</text>
+              <text x="100" y="125" text-anchor="middle" font-size="11" fill="#5C2C1B" font-weight="700" font-family="DM Sans">WellMind GO</text>
+            </svg>
+          </div>
+          <div class="feature__body">
+            <span class="card__tag tag--warm">Mobile app · Free</span>
+            <h3>PolyU WellMind GO</h3>
+            <p>Your pocket-sized psychological buddy. A gamified app where you cook "wisdom soup" with lovable villagers, do breathing exercises, and earn Wellnergy Coins for real gifts. Mental health that actually feels playful.</p>
+            <div class="feature__links">
+              <a class="btn btn--small" href="https://www.polyu.edu.hk/sao/counselling-and-wellness-section/programmes-and-activities/polyu-wellmind-go/what-is-polyu-wellmind-go/" target="_blank" rel="noopener">Learn more</a>
+              <a class="btn btn--small btn--ghost" href="https://apps.apple.com/us/app/polyu-wellmind-go/id6459409325" target="_blank" rel="noopener">Get on App Store</a>
+            </div>
+          </div>
+        </article>
+
+        <a class="feature feature--sm" href="https://www.polyu.edu.hk/sao/counselling-and-wellness-section/wellness-centre/" target="_blank" rel="noopener">
+          <span class="feature__emoji">🏃‍♀️</span>
+          <h3>Wellness Centre</h3>
+          <p>A space in Block X built around "Exercise is Medicine" — fitness consultations, workshops, and the WellFit app to keep moving.</p>
+          <span class="card__cta">Visit centre →</span>
+        </a>
+
+        <a class="feature feature--sm" href="https://www.polyu.edu.hk/sao/counselling-and-wellness-section/programmes-and-activities/psychological-wellness/psychological-wellness-workshops/" target="_blank" rel="noopener">
+          <span class="feature__emoji">🎨</span>
+          <h3>Wellness Workshops</h3>
+          <p>Pastel art, mindful breathing, stress-unwinding sessions, and even moving from FOMO to JOMO. Show up, make something, breathe.</p>
+          <span class="card__cta">See workshops →</span>
+        </a>
+
+        <a class="feature feature--sm" href="https://www.polyu.edu.hk/sao/counselling-and-wellness-section/wellness-centre/about-us/" target="_blank" rel="noopener">
+          <span class="feature__emoji">🤸</span>
+          <h3>Exercise Buddy Scheme</h3>
+          <p>Pair up with a Physiotherapy ambassador who helps track your progress and works out with you. Movement is more fun together.</p>
+          <span class="card__cta">Find a buddy →</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- URGENT SUPPORT -->
+    <section id="urgent" class="section">
+      <header class="section__head">
+        <span class="section__kicker section__kicker--warm">When it's heavy right now</span>
+        <h2 class="section__title">If you need help <em>tonight</em>, this hour, this minute</h2>
+        <p class="section__lede">There's always a real person ready to listen. Please reach out — even if you're not sure what to say.</p>
+      </header>
+
+      <div class="urgent-grid">
+        <div class="urgent urgent--primary">
+          <div class="urgent__top">
+            <span class="urgent__badge">Office hours · 9am–6pm</span>
+            <h3>SAO Counsellors</h3>
+          </div>
+          <p>Walk in to <strong>QT308</strong>, Chow Yei Ching Building (Core T entrance). Or call ahead — counsellors will see you for an urgent appointment.</p>
+          <a class="urgent__call" href="tel:27666800">
+            <span class="urgent__call-icon">📞</span>
+            <span><span class="urgent__call-label">Call</span><span class="urgent__call-num">2766 6800</span></span>
+          </a>
+        </div>
+
+        <div class="urgent urgent--evening">
+          <div class="urgent__top">
+            <span class="urgent__badge">Evenings, weekends, holidays</span>
+            <h3>PolyU-LINE Hotline</h3>
+          </div>
+          <p>Mon–Fri 6pm to 9am, plus 24 hours on weekends and public holidays. Answered by Vital Employee Service Consultancy & followed up by SAO counsellors.</p>
+          <a class="urgent__call" href="tel:81001583">
+            <span class="urgent__call-icon">🌙</span>
+            <span><span class="urgent__call-label">Call</span><span class="urgent__call-num">8100 1583</span></span>
+          </a>
+        </div>
+
+        <div class="urgent urgent--emergency">
+          <div class="urgent__top">
+            <span class="urgent__badge urgent__badge--red">Immediate emergency</span>
+            <h3>Campus Security · 24/7</h3>
+          </div>
+          <p>If you or someone you know is in immediate danger, call campus security right away. For life-threatening emergencies, also call <strong>999</strong>.</p>
+          <a class="urgent__call urgent__call--red" href="tel:27667999">
+            <span class="urgent__call-icon">🚨</span>
+            <span><span class="urgent__call-label">Call</span><span class="urgent__call-num">2766 7999</span></span>
+          </a>
+        </div>
+      </div>
+
+      <div class="hotline-box">
+        <h3 class="hotline-box__title">Other 24-hour community hotlines in Hong Kong</h3>
+        <p class="hotline-box__sub">When you'd like to talk to someone outside the university, these warm lines are there too.</p>
+        <ul class="hotline-list">
+          <li><a href="tel:18111"><span>Mental Health Support Hotline</span><strong>18111</strong></a></li>
+          <li><a href="tel:23820000"><span>Suicide Prevention Services</span><strong>2382 0000</strong></a></li>
+          <li><a href="tel:23892222"><span>The Samaritan Befrienders HK</span><strong>2389 2222</strong></a></li>
+          <li><a href="tel:28960000"><span>Samaritans Multi-lingual (English/Putonghua)</span><strong>2896 0000</strong></a></li>
+          <li><a href="tel:18288"><span>Caritas Family Crisis Support</span><strong>18288</strong></a></li>
+          <li><a href="tel:24667350"><span>Mental Health Hotline (Hospital Authority)</span><strong>2466 7350</strong></a></li>
+          <li><a href="tel:35122626"><span>"JusTone" Mental Health Tele-care</span><strong>3512 2626</strong></a></li>
+          <li><a href="tel:18281"><span>TWGHs CEASE Crisis Centre</span><strong>18281</strong></a></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- COMMUNITY -->
+    <section id="community" class="section section--alt">
+      <header class="section__head">
+        <span class="section__kicker">Belong, share, lift each other</span>
+        <h2 class="section__title">Wellness is <em>better together</em></h2>
+        <p class="section__lede">Join a growing community of students who care about each other's well-being — from peer ambassadors to student-led projects.</p>
+      </header>
+
+      <div class="cards-grid cards-grid--3">
+        <a class="card card--peach" href="https://www.polyu.edu.hk/sao/news-and-events/sao-annual-highlight-2324/counselling-and-wellness-support/" target="_blank" rel="noopener">
+          <div class="card__top">
+            <span class="card__emoji" aria-hidden="true">🤝</span>
+            <span class="card__tag">Peer support</span>
+          </div>
+          <h3 class="card__title">Wellness Ally</h3>
+          <p class="card__desc">Over 50 student leaders trained to listen, support peers, and advocate a healthy lifestyle across campus.</p>
+          <span class="card__cta">Read about it →</span>
+        </a>
+
+        <a class="card card--mint" href="https://www.polyu.edu.hk/sao/news-and-events/sao-annual-highlight-2324/counselling-and-wellness-support/" target="_blank" rel="noopener">
+          <div class="card__top">
+            <span class="card__emoji" aria-hidden="true">✨</span>
+            <span class="card__tag">Student-led</span>
+          </div>
+          <h3 class="card__title">Positive Psychology Ambassadors</h3>
+          <p class="card__desc">A trained team running creative projects on gratitude — to self, to nature, to family, and to the wider community.</p>
+          <span class="card__cta">Get inspired →</span>
+        </a>
+
+        <a class="card card--lavender" href="https://www.polyu.edu.hk/sao/news-and-events/sao-annual-highlight-2324/counselling-and-wellness-support/" target="_blank" rel="noopener">
+          <div class="card__top">
+            <span class="card__emoji" aria-hidden="true">💡</span>
+            <span class="card__tag">Funded projects</span>
+          </div>
+          <h3 class="card__title">PolyU Wellness Fund</h3>
+          <p class="card__desc">Got an idea for a wellness project? The fund supports student-initiated ideas that nurture mental health on campus.</p>
+          <span class="card__cta">Explore →</span>
+        </a>
+
+        <a class="card card--lemon" href="https://www.polyu.edu.hk/resthub/en/find_support/" target="_blank" rel="noopener">
+          <div class="card__top">
+            <span class="card__emoji" aria-hidden="true">🪴</span>
+            <span class="card__tag">Find support</span>
+          </div>
+          <h3 class="card__title">ReST Hub</h3>
+          <p class="card__desc">A friendly hub bringing together every kind of support — from emergency help to everyday self-care guidance.</p>
+          <span class="card__cta">Visit ReST Hub →</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- GENTLE REMINDER -->
+    <section class="kindness">
+      <div class="kindness__inner">
+        <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true">
+          <path d="M32 56s-22-12-22-28a12 12 0 0 1 22-7 12 12 0 0 1 22 7c0 16-22 28-22 28z" fill="#F4A88B"/>
+          <path d="M22 24a4 4 0 1 1 0 0z" fill="#fff"/>
+        </svg>
+        <h2>You deserve kindness — especially from yourself.</h2>
+        <p>Asking for help is not weakness. It's one of the bravest, most generous things you can do — for yourself, and for everyone who loves you. Whatever you're feeling today, it's allowed to be felt. And there's a counsellor, a hotline, an app, or a friendly stranger waiting to walk a few steps beside you.</p>
+        <a class="btn btn--primary" href="#talk">Reach out today</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer__grid">
+      <div>
+        <a href="#top" class="brand">
+          <svg class="brand__mark" width="32" height="32" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+            <path d="M20 34c-9 0-14-7-14-13a7 7 0 0 1 12-5 7 7 0 0 1 12 5c0 6-5 13-10 13z" fill="currentColor" />
+          </svg>
+          <span class="brand__text">Wellness <em>at PolyU</em></span>
+        </a>
+        <p class="site-footer__note">A friendly directory of student wellness resources curated for The Hong Kong Polytechnic University community.</p>
+      </div>
+      <div>
+        <h4>Quick links</h4>
+        <ul>
+          <li><a href="https://www.polyu.edu.hk/sao/" target="_blank" rel="noopener">Student Affairs Office (SAO)</a></li>
+          <li><a href="https://www.polyu.edu.hk/sao/counselling-and-wellness-section/" target="_blank" rel="noopener">Counselling & Wellness Section</a></li>
+          <li><a href="https://www.polyu.edu.hk/resthub/en/find_support/" target="_blank" rel="noopener">ReST Hub — Find Support</a></li>
+          <li><a href="mailto:stud.counselling@polyu.edu.hk">Email a counsellor</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Visit us</h4>
+        <p class="site-footer__address">
+          QT308, Chow Yei Ching Building<br/>
+          (Entrance at Core T)<br/>
+          The Hong Kong Polytechnic University<br/>
+          Hung Hom, Kowloon, Hong Kong
+        </p>
+        <p class="site-footer__hours">
+          Mon–Fri · 9:00 am – 12:45 pm; 2:00 pm – 6:00 pm<br/>
+          Sat & public holidays · Closed
+        </p>
+      </div>
+    </div>
+    <div class="site-footer__bottom">
+      <p>Made with care for PolyU students. All resources sourced from official Student Affairs Office channels.</p>
+      <p>© 2026 · A student wellness directory</p>
+    </div>
+  </footer>
+
+  <script src="script.js" defer></script>
+<script data-pplx-inline-edit>
+(function(){
+  if(window===window.top)return;
+  function inlineAll(orig,clone){
+    if(orig.nodeType!==1)return;
+    try{
+      var cs=getComputedStyle(orig);
+      var t='';
+      for(var i=0;i<cs.length;i++){t+=cs[i]+':'+cs.getPropertyValue(cs[i])+';';}
+      clone.style.cssText=t;
+    }catch(e){}
+    var oc=orig.children,cc=clone.children;
+    for(var j=0;j<oc.length&&j<cc.length;j++){inlineAll(oc[j],cc[j]);}
+  }
+  function stripExternal(clone){
+    var imgs=clone.querySelectorAll('img');
+    for(var i=0;i<imgs.length;i++){
+      var s=imgs[i].getAttribute('src');
+      if(s&&!s.startsWith('data:'))imgs[i].removeAttribute('src');
+    }
+    var all=clone.querySelectorAll('*');
+    for(var i=0;i<all.length;i++){
+      var st=all[i].style.cssText;
+      if(st&&st.indexOf('url(')>=0){
+        all[i].style.cssText=st.replace(/url\(["']?(?!data:)[^)"']*["']?\)/gi,'none');
+      }
+    }
+  }
+  var scrollRaf=0;
+  function emitScroll(){
+    scrollRaf=0;
+    var x=window.scrollX||window.pageXOffset||0;
+    var y=window.scrollY||window.pageYOffset||0;
+    window.parent.postMessage({type:'INLINE_EDIT_SCROLL',scrollX:x,scrollY:y},'*');
+  }
+  window.addEventListener('scroll',function(){
+    if(scrollRaf)return;
+    scrollRaf=requestAnimationFrame(emitScroll);
+  },{passive:true,capture:true});
+  emitScroll();
+  window.addEventListener('message',function(e){
+    if(!e.data||e.data.type!=='INLINE_EDIT_CAPTURE_REQUEST')return;
+    var scrollX=window.scrollX||window.pageXOffset||0;
+    var scrollY=window.scrollY||window.pageYOffset||0;
+    var w=window.innerWidth,h=window.innerHeight;
+    try{
+      var clone=document.documentElement.cloneNode(true);
+      var rm=clone.querySelectorAll('script,link[rel="stylesheet"],style');
+      for(var i=0;i<rm.length;i++){rm[i].remove();}
+      inlineAll(document.documentElement,clone);
+      stripExternal(clone);
+      var html=new XMLSerializer().serializeToString(clone);
+      var svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+w+'" height="'+h+'">'
+        +'<foreignObject width="100%" height="100%">'
+        +'<div xmlns="http://www.w3.org/1999/xhtml" style="width:'+w+'px;height:'+h+'px;overflow:hidden">'
+        +'<div style="transform:translate(-'+scrollX+'px,-'+scrollY+'px);transform-origin:top left">'
+        +html+'</div></div></foreignObject></svg>';
+      var svgUrl='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+      var img=new Image();
+      img.onload=function(){
+        var c=document.createElement('canvas');c.width=w;c.height=h;
+        c.getContext('2d').drawImage(img,0,0);
+        window.parent.postMessage({type:'INLINE_EDIT_SCREENSHOT_RESULT',dataUrl:c.toDataURL('image/png'),scrollX:scrollX,scrollY:scrollY},'*');
+      };
+      img.onerror=function(){
+        window.parent.postMessage({type:'INLINE_EDIT_SCREENSHOT_RESULT',dataUrl:null,scrollX:scrollX,scrollY:scrollY},'*');
+      };
+      img.src=svgUrl;
+    }catch(err){
+      window.parent.postMessage({type:'INLINE_EDIT_SCREENSHOT_RESULT',dataUrl:null,scrollX:scrollX,scrollY:scrollY},'*');
+    }
+  });
+})();
+</script></body>
+</html>

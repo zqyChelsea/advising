@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import api from '../services/api';
 
 const Tickets = () => {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [searchParams] = useSearchParams();
   const [tickets, setTickets] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,7 +24,7 @@ const Tickets = () => {
 
   const getReplyDisplayName = (reply) => {
     if (reply.isTeacher) {
-      return 'Staff';
+      return t('tickets.staff');
     }
     return reply.from || user?.fullName || 'You';
   };
@@ -47,7 +49,6 @@ const Tickets = () => {
     fetchTickets();
   }, []);
 
-  // Handle reply from email link - separate effect
   useEffect(() => {
     const replyTicketId = searchParams.get('reply');
     if (replyTicketId && tickets.length > 0) {
@@ -94,10 +95,10 @@ const Tickets = () => {
 
   const getStatusText = (status) => {
     switch (status) {
-      case 'pending': return 'Pending';
-      case 'in_progress': return 'In Progress';
-      case 'resolved': return 'Resolved';
-      case 'closed': return 'Completed';
+      case 'pending': return t('tickets.pending');
+      case 'in_progress': return t('tickets.inProgress');
+      case 'resolved': return t('tickets.resolved');
+      case 'closed': return t('tickets.completed');
       default: return status;
     }
   };
@@ -125,7 +126,7 @@ const Tickets = () => {
 
   const handleCreateTicket = async () => {
     if (!newTicket.title.trim()) {
-      alert('Please enter a title');
+      alert(t('tickets.enterTitleError'));
       return;
     }
 
@@ -135,10 +136,10 @@ const Tickets = () => {
       setTickets([response.data, ...tickets]);
       setShowModal(false);
       setNewTicket({ title: '', description: '', category: 'other' });
-      alert('Issue report submitted successfully! An email has been sent to the teacher.');
+      alert(t('tickets.submitSuccess'));
     } catch (error) {
       console.error('Error creating ticket:', error);
-      alert(error.response?.data?.message || 'Error submitting issue report');
+      alert(error.response?.data?.message || t('tickets.submitError'));
     } finally {
       setSubmitting(false);
     }
@@ -167,7 +168,7 @@ const Tickets = () => {
       fetchTickets();
     } catch (error) {
       console.error('Error adding reply:', error);
-      alert(error.response?.data?.message || 'Error sending reply');
+      alert(error.response?.data?.message || t('common.error'));
     } finally {
       setSubmitting(false);
     }
@@ -176,7 +177,7 @@ const Tickets = () => {
   const handleMarkCompleted = async () => {
     if (!selectedTicket) return;
 
-    if (!window.confirm('Mark this issue report as completed and end the conversation?')) {
+    if (!window.confirm(t('tickets.markCompleteConfirm'))) {
       return;
     }
 
@@ -194,7 +195,7 @@ const Tickets = () => {
       setTickets((prev) => prev.map((t) => (t._id === updated._id ? updated : t)));
     } catch (error) {
       console.error('Error marking ticket as completed:', error);
-      alert(error.response?.data?.message || 'Error marking issue as completed');
+      alert(error.response?.data?.message || t('tickets.markCompleteError'));
     } finally {
       setSubmitting(false);
     }
@@ -203,7 +204,7 @@ const Tickets = () => {
   const handleBatchDelete = async () => {
     if (selectedIds.length === 0) return;
 
-    if (!window.confirm(`Are you sure you want to delete ${selectedIds.length} selected issue report(s)?`)) {
+    if (!window.confirm(t('tickets.deleteConfirm').replace('{count}', selectedIds.length))) {
       return;
     }
 
@@ -214,7 +215,7 @@ const Tickets = () => {
       setSelectedIds([]);
     } catch (error) {
       console.error('Error deleting tickets:', error);
-      alert(error.response?.data?.message || 'Error deleting selected issue reports');
+      alert(error.response?.data?.message || t('tickets.deleteError'));
     } finally {
       setSubmitting(false);
     }
@@ -225,15 +226,15 @@ const Tickets = () => {
       <div className="flex flex-col flex-1 animate-slide-in">
         <header className="mb-6 lg:mb-8 flex flex-col sm:flex-row justify-between sm:items-end gap-4">
           <div>
-            <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900">Issue Report and Contact Us</h2>
-            <p className="text-slate-500 mt-2 text-sm lg:text-base">Formal escalation when the AI advisor cannot solve your specific issue.</p>
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900">{t('tickets.title')}</h2>
+            <p className="text-slate-500 mt-2 text-sm lg:text-base">{t('tickets.subtitle')}</p>
           </div>
           <button
             className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 bg-[#8EB19D] text-white rounded-xl sm:rounded-2xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-[#8EB19D]/20 hover:bg-[#7B9D8A] hover:scale-105 transition-all flex-shrink-0"
             onClick={() => setShowModal(true)}
           >
             <span className="iconify" data-icon="solar:add-bold"></span>
-            Contact Us
+            {t('tickets.contactUs')}
           </button>
         </header>
 
@@ -247,7 +248,7 @@ const Tickets = () => {
               <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-slate-300 mx-auto mb-4">
                 <span className="iconify text-4xl" data-icon="solar:inbox-bold"></span>
               </div>
-              <p className="text-slate-400">No issue reports yet. Click "Contact Us" to create one.</p>
+              <p className="text-slate-400">{t('tickets.noTickets')}</p>
             </div>
           ) : (
             <>
@@ -258,10 +259,10 @@ const Tickets = () => {
                     checked={tickets.length > 0 && selectedIds.length === tickets.length}
                     onChange={handleSelectAll}
                   />
-                  <span>Select all</span>
+                  <span>{t('tickets.selectAll')}</span>
                   {selectedIds.length > 0 && (
                     <span className="text-xs text-slate-400">
-                      {selectedIds.length} selected
+                      {selectedIds.length} {t('tickets.selected')}
                     </span>
                   )}
                 </div>
@@ -270,7 +271,7 @@ const Tickets = () => {
                   onClick={handleBatchDelete}
                   disabled={selectedIds.length === 0 || submitting}
                 >
-                  Delete Selected
+                  {t('tickets.deleteSelected')}
                 </button>
               </div>
 
@@ -299,7 +300,7 @@ const Tickets = () => {
                         <div className="flex items-center gap-3 mt-1 text-xs text-slate-400">
                           <span className="flex items-center gap-1">
                             <span className="iconify" data-icon="solar:users-group-rounded-bold"></span>
-                            {ticket.assignedTo || 'Pending'}
+                            {ticket.assignedTo || t('tickets.pending')}
                           </span>
                           <span>-</span>
                           <span className="flex items-center gap-1 uppercase font-bold tracking-tighter">{ticket.ticketId}</span>
@@ -308,7 +309,7 @@ const Tickets = () => {
                               <span>-</span>
                               <span className="flex items-center gap-1 text-[#6B8E7B]">
                                 <span className="iconify" data-icon="solar:chat-round-dots-bold"></span>
-                                {ticket.replies.length} {ticket.replies.length === 1 ? 'reply' : 'replies'}
+                                {ticket.replies.length} {ticket.replies.length === 1 ? t('tickets.reply') : t('tickets.replies')}
                               </span>
                             </>
                           )}
@@ -317,7 +318,7 @@ const Tickets = () => {
                     </div>
                     <div className="flex items-center gap-4 lg:gap-6">
                       <div className="text-right hidden sm:block">
-                        <p className="text-xs text-slate-400 mb-1 uppercase font-bold tracking-widest">Last Update</p>
+                        <p className="text-xs text-slate-400 mb-1 uppercase font-bold tracking-widest">{t('tickets.lastUpdate')}</p>
                         <p className="text-sm font-semibold text-slate-700">{formatDate(ticket.updatedAt)}</p>
                       </div>
                       <div className={`px-3 lg:px-4 py-2 rounded-xl text-xs font-black uppercase ${getStatusColor(ticket.status)}`}>
@@ -333,7 +334,7 @@ const Tickets = () => {
                 <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-slate-300 mx-auto mb-4">
                   <span className="iconify text-4xl" data-icon="solar:history-bold"></span>
                 </div>
-                <p className="text-slate-400">No more Issue Report in recent 30 days.</p>
+                <p className="text-slate-400">{t('tickets.noMoreReports')}</p>
               </div>
             </>
           )}
@@ -351,7 +352,7 @@ const Tickets = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-bold text-slate-900">Send us messages</h3>
+              <h3 className="text-xl font-bold text-slate-900">{t('tickets.sendUs')}</h3>
               <button
                 className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
                 onClick={() => setShowModal(false)}
@@ -362,36 +363,36 @@ const Tickets = () => {
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Title</label>
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">{t('tickets.titleLabel')}</label>
                 <input
                   className="w-full border-2 border-slate-100 rounded-xl px-4 py-3 focus:border-[#6B8E7B] focus:ring-0 outline-none transition-all font-medium"
                   type="text"
-                  placeholder="Brief description of your issue"
+                  placeholder={t('tickets.titlePlaceholder')}
                   value={newTicket.title}
                   onChange={(e) => setNewTicket({ ...newTicket, title: e.target.value })}
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Category</label>
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">{t('tickets.category')}</label>
                 <select
                   className="w-full border-2 border-slate-100 rounded-xl px-4 py-3 focus:border-[#6B8E7B] focus:ring-0 outline-none transition-all font-medium"
                   value={newTicket.category}
                   onChange={(e) => setNewTicket({ ...newTicket, category: e.target.value })}
                 >
-                  <option value="credit_transfer">Credit Transfer</option>
-                  <option value="wie">WIE (Work-Integrated Education)</option>
-                  <option value="exchange">Exchange</option>
-                  <option value="other">Other</option>
+                  <option value="credit_transfer">{t('tickets.creditTransfer')}</option>
+                  <option value="wie">{t('tickets.wie')}</option>
+                  <option value="exchange">{t('tickets.exchange')}</option>
+                  <option value="other">{t('tickets.other')}</option>
                 </select>
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Description</label>
+                <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">{t('tickets.description')}</label>
                 <textarea
                   className="w-full border-2 border-slate-100 rounded-xl px-4 py-3 focus:border-[#6B8E7B] focus:ring-0 outline-none transition-all font-medium resize-none"
                   rows="4"
-                  placeholder="Detailed description of your issue..."
+                  placeholder={t('tickets.descriptionPlaceholder')}
                   value={newTicket.description}
                   onChange={(e) => setNewTicket({ ...newTicket, description: e.target.value })}
                 />
@@ -404,7 +405,7 @@ const Tickets = () => {
                 onClick={() => setShowModal(false)}
                 disabled={submitting}
               >
-                Cancel
+                {t('tickets.cancel')}
               </button>
               <button
                 className="px-8 py-2.5 rounded-xl bg-[#6B8E7B] text-white font-bold shadow-lg shadow-[#6B8E7B]/10 hover:bg-[#5A7A69] transition-all flex items-center gap-2"
@@ -414,10 +415,10 @@ const Tickets = () => {
                 {submitting ? (
                   <>
                     <span className="iconify animate-spin" data-icon="solar:loading-bold"></span>
-                    Submitting...
+                    {t('tickets.submitting')}
                   </>
                 ) : (
-                  'Submit'
+                  t('tickets.submit')
                 )}
               </button>
             </div>
@@ -473,7 +474,7 @@ const Tickets = () => {
               {/* Replies */}
               {selectedTicket.replies?.length > 0 && (
                 <div className="space-y-4">
-                  <h4 className="text-sm font-bold text-slate-500 uppercase tracking-wider">Conversation</h4>
+                  <h4 className="text-sm font-bold text-slate-500 uppercase tracking-wider">{t('tickets.conversation')}</h4>
                   {selectedTicket.replies.map((reply, index) => (
                     <div
                       key={index}
@@ -486,7 +487,7 @@ const Tickets = () => {
                         <div>
                           <p className="text-sm font-bold text-slate-700">
                             {getReplyDisplayName(reply)}
-                            {reply.isTeacher && <span className="ml-2 text-xs text-[#6B8E7B] font-normal">(Teacher)</span>}
+                            {reply.isTeacher && <span className="ml-2 text-xs text-[#6B8E7B] font-normal">{t('tickets.teacher')}</span>}
                           </p>
                           <p className="text-xs text-slate-400">{formatDate(reply.createdAt)}</p>
                         </div>
@@ -500,7 +501,7 @@ const Tickets = () => {
               {selectedTicket.replies?.length === 0 && (
                 <div className="text-center py-8">
                   <span className="iconify text-4xl text-slate-200 mb-2" data-icon="solar:chat-round-dots-bold"></span>
-                  <p className="text-slate-400 text-sm">No replies yet. The teacher will respond via email.</p>
+                  <p className="text-slate-400 text-sm">{t('tickets.noReplies')}</p>
                 </div>
               )}
             </div>
@@ -513,7 +514,7 @@ const Tickets = () => {
                     <textarea
                       className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 focus:border-[#6B8E7B] focus:ring-0 outline-none transition-all text-sm resize-none bg-white"
                       rows="2"
-                      placeholder="Type your reply..."
+                      placeholder={t('tickets.typeReply')}
                       value={replyContent}
                       onChange={(e) => setReplyContent(e.target.value)}
                     />
@@ -523,7 +524,7 @@ const Tickets = () => {
                       onClick={handleMarkCompleted}
                       disabled={submitting}
                     >
-                      Mark this issue as Completed and end conversation
+                      {t('tickets.markCompleted')}
                     </button>
                   </div>
                   <button
@@ -536,7 +537,7 @@ const Tickets = () => {
                     ) : (
                       <span className="iconify" data-icon="solar:send-bold"></span>
                     )}
-                    <span className="hidden sm:inline">Send</span>
+                    <span className="hidden sm:inline">{t('tickets.send')}</span>
                   </button>
                 </div>
               </div>
