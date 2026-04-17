@@ -78,15 +78,13 @@ const Chat = () => {
   const [conversationId, setConversationId] = useState(() => localStorage.getItem(CONVERSATION_ID_KEY) || null);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const messagesEndRef = useRef(null);
-  const isInitializedRef = useRef(false);
 
   const scrollToBottom = (behavior = 'smooth') => {
     messagesEndRef.current?.scrollIntoView({ behavior });
   };
 
   useEffect(() => {
-    if (!user || isInitializedRef.current) return;
-    isInitializedRef.current = true;
+    if (!user) return;
 
     const firstName = user.firstName || 'Student';
     const greeting = {
@@ -121,7 +119,7 @@ const Chat = () => {
     } else {
       setMessages([greeting]);
     }
-  }, [user, sessionId, conversationId, t]);
+  }, [user, t]);
 
   useEffect(() => {
     if (messages.length > 0) {
@@ -131,12 +129,10 @@ const Chat = () => {
 
   const startNewSession = () => {
     const newSid = String(Date.now());
-    const newCid = null;
     localStorage.setItem(SESSION_ID_KEY, newSid);
     localStorage.setItem(CONVERSATION_ID_KEY, '');
     setSessionId(newSid);
     setConversationId(null);
-    isInitializedRef.current = false;
     setMessages([]);
   };
 
