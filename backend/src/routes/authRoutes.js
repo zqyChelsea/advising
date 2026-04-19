@@ -2,6 +2,7 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 import { protect, generateToken } from '../middleware/auth.js';
+import { difySyncService } from '../services/difySyncService.js';
 
 const router = express.Router();
 
@@ -28,6 +29,11 @@ router.post('/register', async (req, res) => {
     });
 
     const token = generateToken(user._id);
+
+    // Sync user to Dify
+    difySyncService.syncUser(user).catch(err => {
+      console.error('Background Dify sync failed:', err.message);
+    });
 
     res.status(201).json({
       token,
@@ -75,6 +81,11 @@ router.post('/login', async (req, res) => {
     }
 
     const token = generateToken(user._id);
+
+    // Sync user to Dify on login (to update latest data)
+    difySyncService.syncUser(user).catch(err => {
+      console.error('Background Dify sync failed:', err.message);
+    });
 
     res.json({
       token,
@@ -155,6 +166,11 @@ router.put('/profile', protect, async (req, res) => {
       { new: true, runValidators: true }
     ).select('-password');
 
+    // Sync updated user to Dify
+    difySyncService.syncUser(user).catch(err => {
+      console.error('Background Dify sync failed:', err.message);
+    });
+
     res.json({
       id: user._id,
       studentId: user.studentId,
@@ -200,6 +216,11 @@ router.put('/avatar', protect, async (req, res) => {
       { avatar },
       { new: true, runValidators: true }
     ).select('-password');
+
+    // Sync avatar update to Dify
+    difySyncService.syncUser(user).catch(err => {
+      console.error('Background Dify sync failed:', err.message);
+    });
 
     res.json({
       message: 'Avatar updated successfully',

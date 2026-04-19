@@ -99,6 +99,13 @@ const zhTW = {
   'chat.quickWIE': 'WIE申請',
   'chat.quickSubjectChoice': '選課建議',
   'chat.greeting': '{name}您好！我是您的學業顧問。我注意到選課時間即將到來。需要我幫您檢查2026年秋季學期的通識教育或WIE缺口嗎？',
+  'chat.history': '對話歷史',
+  'chat.noHistory': '暫無對話歷史',
+  'chat.startNewChat': '開始新對話',
+  'chat.today': '今天',
+  'chat.yesterday': '昨天',
+  'chat.deleteConversation': '刪除對話',
+  'chat.conversationDeleted': '對話已刪除',
 
   // Resources Page
   'resources.title': '資源與連結',

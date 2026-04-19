@@ -99,6 +99,13 @@ const zhCN = {
   'chat.quickWIE': 'WIE申请',
   'chat.quickSubjectChoice': '选课建议',
   'chat.greeting': '{name}您好！我是您的学业顾问。我注意到选课时间即将到来。需要我帮您检查2026年秋季学期的通识教育或WIE缺口吗？',
+  'chat.history': '对话历史',
+  'chat.noHistory': '暂无对话历史',
+  'chat.startNewChat': '开始新对话',
+  'chat.today': '今天',
+  'chat.yesterday': '昨天',
+  'chat.deleteConversation': '删除对话',
+  'chat.conversationDeleted': '对话已删除',
 
   // Resources Page
   'resources.title': '资源与链接',

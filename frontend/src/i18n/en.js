@@ -99,6 +99,13 @@ const en = {
   'chat.quickWIE': 'WIE Application',
   'chat.quickSubjectChoice': 'Subject Choice Advice',
   'chat.greeting': "Hi {name}! I'm your Academic Advisor. I noticed that the subject registration period is approaching. Do you need me to help you check for GUR or WIE gaps for the Fall 2026 semester?",
+  'chat.history': 'Chat History',
+  'chat.noHistory': 'No chat history yet',
+  'chat.startNewChat': 'Start a new chat',
+  'chat.today': 'Today',
+  'chat.yesterday': 'Yesterday',
+  'chat.deleteConversation': 'Delete conversation',
+  'chat.conversationDeleted': 'Conversation deleted',
 
   // Resources Page
   'resources.title': 'Resources and Useful Links',

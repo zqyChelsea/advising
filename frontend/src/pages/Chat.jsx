@@ -3,7 +3,8 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
-import { sendChatMessage, getChatHistory, saveChatMessage, deleteChatSession } from '../services/api';
+import { useChat } from '../contexts/ChatContext';
+import { sendChatMessageStream } from '../services/api';
 
 const markdownComponents = {
   p: ({ children }) => <p className="mb-3 last:mb-0 text-sm leading-relaxed text-slate-700">{children}</p>,
@@ -56,6 +57,13 @@ function normalizeAssistantMarkdown(raw) {
 
 function AssistantMessageBody({ content }) {
   const normalized = normalizeAssistantMarkdown(content);
+
+  if (!normalized || normalized.trim() === '') {
+    return (
+      <div className="text-slate-400 italic">No response content</div>
+    );
+  }
+
   return (
     <div className="chat-markdown max-w-none">
       <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
@@ -65,75 +73,107 @@ function AssistantMessageBody({ content }) {
   );
 }
 
-const SESSION_ID_KEY = 'advising_sessionId';
-const CONVERSATION_ID_KEY = 'advising_conversationId';
+const STORAGE_KEY = 'advising_chat_conversation';
 
 const Chat = () => {
   const { user } = useAuth();
   const { t } = useLanguage();
-  const [messages, setMessages] = useState([]);
+  const {
+    currentMessages,
+    setCurrentMessages,
+    currentSession,
+    setCurrentSession,
+    selectSession,
+    loadSessions,
+    refreshSessions,
+    isLoading,
+    updateSessionTitle
+  } = useChat();
+
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [sessionId, setSessionId] = useState(() => localStorage.getItem(SESSION_ID_KEY) || null);
-  const [conversationId, setConversationId] = useState(() => localStorage.getItem(CONVERSATION_ID_KEY) || null);
-  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+  const [conversationId, setConversationId] = useState(null);
+  const [hasInitialized, setHasInitialized] = useState(false);
+  const [isRenaming, setIsRenaming] = useState(false);
+  const [newTitle, setNewTitle] = useState('');
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = (behavior = 'smooth') => {
     messagesEndRef.current?.scrollIntoView({ behavior });
   };
 
+  // Load conversation on mount
   useEffect(() => {
-    if (!user) return;
+    if (!user || hasInitialized) return;
 
-    const firstName = user.firstName || 'Student';
-    const greeting = {
-      id: 1,
-      role: 'assistant',
-      content: t('chat.greeting').replace('{name}', firstName),
-      timestamp: new Date()
+    const loadConversation = async () => {
+      // Load all sessions
+      await loadSessions();
+
+      // Get stored conversation ID from localStorage
+      const storedConversationId = localStorage.getItem(STORAGE_KEY);
+
+      if (storedConversationId) {
+        // Try to restore the stored conversation
+        await selectSession({ _id: storedConversationId });
+      }
+      // else: If no stored session, just show greeting (empty messages)
+
+      setHasInitialized(true);
     };
 
-    if (conversationId && sessionId) {
-      setIsLoadingHistory(true);
-      getChatHistory(sessionId)
-        .then((history) => {
-          if (history && history.length > 0) {
-            setMessages(history.map((msg, idx) => ({
-              id: idx + 1,
-              role: msg.role,
-              content: msg.content,
-              timestamp: new Date(msg.createdAt)
-            })));
-            setTimeout(() => scrollToBottom('instant'), 50);
-          } else {
-            setMessages([greeting]);
-          }
-        })
-        .catch(() => {
-          setMessages([greeting]);
-        })
-        .finally(() => {
-          setIsLoadingHistory(false);
-        });
-    } else {
-      setMessages([greeting]);
-    }
-  }, [user, t]);
+    loadConversation();
+  }, [user, hasInitialized, loadSessions, selectSession]);
 
+  // Sync session changes to local state
   useEffect(() => {
-    if (messages.length > 0) {
+    if (currentSession?._id) {
+      setConversationId(currentSession._id);
+      localStorage.setItem(STORAGE_KEY, currentSession._id);
+    }
+  }, [currentSession?._id]);
+
+  // Scroll to bottom when messages change
+  useEffect(() => {
+    if (currentMessages.length > 0) {
       scrollToBottom();
     }
-  }, [messages]);
+  }, [currentMessages]);
 
-  const startNewSession = () => {
-    const newSid = String(Date.now());
-    localStorage.setItem(SESSION_ID_KEY, newSid);
-    localStorage.setItem(CONVERSATION_ID_KEY, '');
-    setSessionId(newSid);
+  // Start renaming session
+  const handleStartRename = () => {
+    if (currentSession?._id) {
+      setNewTitle(currentSession.title || '');
+      setIsRenaming(true);
+    }
+  };
+
+  // Save renamed title
+  const handleSaveRename = async () => {
+    if (newTitle.trim() && currentSession?._id) {
+      try {
+        await updateSessionTitle(currentSession._id, newTitle.trim());
+      } catch (error) {
+        console.error('Failed to rename session:', error);
+      }
+    }
+    setIsRenaming(false);
+    setNewTitle('');
+  };
+
+  // Cancel renaming
+  const handleCancelRename = () => {
+    setIsRenaming(false);
+    setNewTitle('');
+  };
+
+  const handleNewChat = () => {
+    // Clear localStorage for current conversation
+    localStorage.removeItem(STORAGE_KEY);
+    setCurrentSession(null);
+    setCurrentMessages([]);
     setConversationId(null);
-    setMessages([]);
+    // The greeting will be shown when currentMessages is empty
   };
 
   const handleSend = async () => {
@@ -147,52 +187,101 @@ const Chat = () => {
       timestamp: new Date()
     };
 
-    const currentSessionId = sessionId || String(Date.now());
-    if (!sessionId) {
-      localStorage.setItem(SESSION_ID_KEY, currentSessionId);
-      setSessionId(currentSessionId);
-    }
-
-    setMessages(prev => [...prev, userMessage]);
+    // Immediately update messages
+    setCurrentMessages(prev => [...prev, userMessage]);
     setInput('');
+
+    // 构建 Dify 所需的 inputs（用户档案信息）
+    const inputs = {
+      student_id: user?.studentId || '',
+      email: user?.email || '',
+      first_name: user?.firstName || '',
+      family_name: user?.familyName || '',
+      entry_year: user?.entryYear || new Date().getFullYear(),
+      expected_graduation: user?.expectedGraduation || '',
+      department: user?.department || '',
+      major: user?.major || '',
+      gpa: user?.gpa || 0,
+      total_credits: user?.totalCredits || 0
+    };
+
+    // Create placeholder for streaming AI message
+    const aiMessageId = Date.now() + 1;
+    const aiMessage = {
+      id: aiMessageId,
+      role: 'assistant',
+      content: '',
+      timestamp: new Date()
+    };
+
+    setCurrentMessages(prev => [...prev, aiMessage]);
     setIsTyping(true);
 
+    // Refresh sessions list to show the conversation in history
+    // even if it's still in progress
+    refreshSessions();
+
     try {
-      const data = await sendChatMessage(text, { conversationId: conversationId || undefined });
-
-      const difyCid = data?.conversation_id;
-      if (difyCid) {
-        localStorage.setItem(CONVERSATION_ID_KEY, difyCid);
-        setConversationId(difyCid);
-      }
-
-      const aiContent = data?.answer || data?.message || t('chat.errorResponse');
-
-      const aiMessage = {
-        id: Date.now() + 1,
-        role: 'assistant',
-        content: aiContent,
-        timestamp: new Date()
-      };
-
-      setMessages(prev => [...prev, aiMessage]);
-
-      const sid = data?._sessionId || currentSessionId;
-      await saveChatMessage({ sessionId: sid, role: 'user', content: text }).catch(() => {});
-      await saveChatMessage({ sessionId: sid, role: 'assistant', content: aiContent }).catch(() => {});
+      await sendChatMessageStream(
+        text,
+        inputs,
+        { conversationId: conversationId || undefined },
+        {
+          onMessage: (chunk, difyCid, eventType) => {
+            // Handle session_created event
+            if (eventType === 'session_created' && chunk) {
+              const sessionId = chunk;
+              if (sessionId && sessionId !== conversationId) {
+                setConversationId(sessionId);
+                localStorage.setItem(STORAGE_KEY, sessionId);
+                setCurrentSession({ _id: sessionId });
+              }
+              return;
+            }
+            // Update conversation ID if received
+            if (difyCid && difyCid !== conversationId) {
+              setConversationId(difyCid);
+              localStorage.setItem(STORAGE_KEY, difyCid);
+              // Update session in context
+              setCurrentSession({ _id: difyCid });
+            }
+            // Append chunk to message content
+            setCurrentMessages(prev => prev.map(msg =>
+              msg.id === aiMessageId
+                ? { ...msg, content: msg.content + chunk }
+                : msg
+            ));
+          },
+          onDone: (finalConversationId) => {
+            if (finalConversationId && finalConversationId !== conversationId) {
+              setConversationId(finalConversationId);
+              localStorage.setItem(STORAGE_KEY, finalConversationId);
+              setCurrentSession({ _id: finalConversationId });
+            }
+            // Refresh sessions list to ensure the new session appears
+            refreshSessions();
+            setIsTyping(false);
+          },
+          onError: (error) => {
+            console.error('Chat error:', error);
+            const errorText = error?.message || t('chat.errorService');
+            setCurrentMessages(prev => prev.map(msg =>
+              msg.id === aiMessageId
+                ? { ...msg, content: errorText }
+                : msg
+            ));
+            setIsTyping(false);
+          }
+        }
+      );
     } catch (error) {
       console.error('Chat error:', error);
       const errorText = error?.response?.data?.message || error?.message || t('chat.errorService');
-
-      const aiMessage = {
-        id: Date.now() + 1,
-        role: 'assistant',
-        content: errorText,
-        timestamp: new Date()
-      };
-
-      setMessages(prev => [...prev, aiMessage]);
-    } finally {
+      setCurrentMessages(prev => prev.map(msg =>
+        msg.id === aiMessageId
+          ? { ...msg, content: errorText }
+          : msg
+      ));
       setIsTyping(false);
     }
   };
@@ -201,6 +290,15 @@ const Chat = () => {
     setInput(action);
     setTimeout(() => handleSend(), 100);
   };
+
+  // Determine if we should show greeting
+  const showGreeting = currentMessages.length === 0;
+  const greetingMessage = showGreeting ? {
+    id: 'greeting',
+    role: 'assistant',
+    content: t('chat.greeting').replace('{name}', user?.firstName || 'Student'),
+    timestamp: new Date()
+  } : null;
 
   return (
     <div className="h-[calc(100vh-8rem)] lg:h-[calc(100vh-6rem)] flex flex-col p-3 sm:p-4 gap-4 animate-slide-in">
@@ -211,8 +309,51 @@ const Chat = () => {
             <div className="w-10 h-10 sm:w-12 sm:h-12 bg-[#F2F4F2] rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0">
               <span className="iconify text-2xl sm:text-3xl" data-icon="flat-color-icons:assistant"></span>
             </div>
-            <div className="min-w-0">
-              <h3 className="font-bold text-[#2C3E50] text-base sm:text-lg truncate">{t('chat.title')}</h3>
+            <div className="min-w-0 flex-1">
+              <h3 className="font-bold text-[#2C3E50] text-base sm:text-lg truncate">
+                {isRenaming ? (
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={newTitle}
+                      onChange={(e) => setNewTitle(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') handleSaveRename();
+                        if (e.key === 'Escape') handleCancelRename();
+                      }}
+                      className="px-2 py-1 text-sm border border-[#8EB19D] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#8EB19D]/50 w-40 sm:w-64"
+                      autoFocus
+                    />
+                    <button
+                      onClick={handleSaveRename}
+                      className="p-1 text-[#6B8E7B] hover:text-[#5A7A69]"
+                    >
+                      <span className="iconify text-lg" data-icon="solar:check-circle-bold"></span>
+                    </button>
+                    <button
+                      onClick={handleCancelRename}
+                      className="p-1 text-slate-400 hover:text-slate-600"
+                    >
+                      <span className="iconify text-lg" data-icon="solar:close-circle-bold"></span>
+                    </button>
+                  </div>
+                ) : conversationId ? (
+                  <div className="flex items-center gap-2">
+                    <span className="truncate max-w-[150px] sm:max-w-[200px]">
+                      {currentSession?.title || t('chat.newSession')}
+                    </span>
+                    <button
+                      onClick={handleStartRename}
+                      className="p-1 text-slate-400 hover:text-[#6B8E7B] flex-shrink-0"
+                      title="Rename session"
+                    >
+                      <span className="iconify text-base" data-icon="solar:pen-bold"></span>
+                    </button>
+                  </div>
+                ) : (
+                  t('chat.title')
+                )}
+              </h3>
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 bg-[#6BC4A6] rounded-full animate-pulse flex-shrink-0"></span>
                 <span className="text-[10px] sm:text-xs text-[#95A5A6] font-medium truncate">
@@ -223,7 +364,7 @@ const Chat = () => {
           </div>
           <div className="flex gap-2 sm:gap-3 flex-shrink-0">
             <button
-              onClick={startNewSession}
+              onClick={handleNewChat}
               className="hidden sm:flex px-3 sm:px-5 py-2 sm:py-2.5 bg-[#F5F8FA] text-[#6B8E7B] rounded-xl text-xs sm:text-sm font-bold items-center gap-2 hover:bg-[#E8F0EB] transition-all border border-[#6B8E7B]/10"
             >
               <span className="iconify" data-icon="flat-color-icons:plus"></span>
@@ -238,49 +379,59 @@ const Chat = () => {
 
         {/* Messages area */}
         <div className="flex-1 min-h-0 overflow-y-auto p-6 space-y-6 hide-scrollbar">
-          {isLoadingHistory && (
-            <div className="flex justify-center py-4">
-              <span className="iconify text-2xl text-[#6B8E7B] animate-spin" data-icon="solar:loading-bold"></span>
-              <span className="ml-2 text-sm text-slate-500">{t('chat.loadingHistory')}</span>
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center h-full text-slate-400">
+              <div className="flex gap-1 mb-2">
+                <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></span>
+                <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></span>
+                <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
+              </div>
+              <span className="text-sm">Loading conversation...</span>
             </div>
-          )}
-
-          {messages.map((msg) => (
-            <div key={msg.id} className={`flex gap-4 max-w-2xl ${msg.role === 'user' ? 'ml-auto flex-row-reverse' : ''}`}>
-              <div className={`w-10 h-10 rounded-2xl flex-shrink-0 flex items-center justify-center ${
-                msg.role === 'assistant' ? 'bg-[#E8F0EB] text-[#6B8E7B]' : 'bg-slate-100 text-slate-500'
-              }`}>
-                <span className="iconify text-xl" data-icon={msg.role === 'assistant' ? 'solar:star-fall-2-bold-duotone' : 'solar:user-bold'}></span>
-              </div>
-              <div className={`${msg.role === 'user' ? 'bg-[#8EB19D] text-white' : 'bg-[#F5F8FA]'} p-4 rounded-2xl ${msg.role === 'user' ? 'rounded-tr-none' : 'rounded-tl-none'} shadow-lg`}>
-                {msg.role === 'assistant' ? (
-                  <AssistantMessageBody content={msg.content} />
-                ) : (
-                  <p className="whitespace-pre-wrap text-sm leading-relaxed">{msg.content}</p>
-                )}
-              </div>
-            </div>
-          ))}
-
-          {isTyping && (
-            <div className="flex gap-4 max-w-2xl">
-              <div className="w-10 h-10 rounded-2xl flex-shrink-0 flex items-center justify-center bg-[#E8F0EB] text-[#6B8E7B]">
-                <span className="iconify text-xl" data-icon="solar:star-fall-2-bold-duotone"></span>
-              </div>
-              <div className="bg-[#F5F8FA] p-4 rounded-2xl rounded-tl-none">
-                <div className="flex gap-1">
-                  <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></span>
-                  <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></span>
-                  <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
+          ) : (
+            <>
+              {greetingMessage && (
+                <div className="flex gap-4 max-w-2xl">
+                  <div className="w-10 h-10 rounded-2xl flex-shrink-0 flex items-center justify-center bg-[#E8F0EB] text-[#6B8E7B]">
+                    <span className="iconify text-xl" data-icon="solar:star-fall-2-bold-duotone"></span>
+                  </div>
+                  <div className="bg-[#F5F8FA] p-4 rounded-2xl rounded-tl-none shadow-lg">
+                    <AssistantMessageBody content={greetingMessage.content} />
+                  </div>
                 </div>
-              </div>
-            </div>
+              )}
+              {currentMessages.map((msg) => (
+                <div key={msg.id} className={`flex gap-4 max-w-2xl ${msg.role === 'user' ? 'ml-auto flex-row-reverse' : ''}`}>
+                  <div className={`w-10 h-10 rounded-2xl flex-shrink-0 flex items-center justify-center ${
+                    msg.role === 'assistant' ? 'bg-[#E8F0EB] text-[#6B8E7B]' : 'bg-slate-100 text-slate-500'
+                  }`}>
+                    <span className="iconify text-xl" data-icon={msg.role === 'assistant' ? 'solar:star-fall-2-bold-duotone' : 'solar:user-bold'}></span>
+                  </div>
+                  <div className={`${msg.role === 'user' ? 'bg-[#8EB19D] text-white' : 'bg-[#F5F8FA]'} p-4 rounded-2xl ${msg.role === 'user' ? 'rounded-tr-none' : 'rounded-tl-none'} shadow-lg`}>
+                    {msg.role === 'assistant' ? (
+                      isTyping && !msg.content ? (
+                        <div className="flex gap-1">
+                          <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></span>
+                          <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></span>
+                          <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
+                        </div>
+                      ) : (
+                        <AssistantMessageBody content={msg.content} />
+                      )
+                    ) : (
+                      <p className="whitespace-pre-wrap text-sm leading-relaxed">{msg.content}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </>
           )}
+
           <div ref={messagesEndRef} />
         </div>
 
         {/* Quick Actions */}
-        {!isLoadingHistory && messages.length <= 1 && (
+        {currentMessages.length === 0 && (
           <div className="px-6 pb-4 flex-shrink-0">
             <div className="flex flex-wrap gap-2">
               <button onClick={() => handleQuickAction('Graduation Gap Check')} className="px-3 py-1.5 bg-white border border-slate-200 rounded-full text-xs font-semibold text-slate-600 hover:border-[#8EB19D] hover:text-[#6B8E7B] transition-all">{t('chat.quickGraduationGap')}</button>
