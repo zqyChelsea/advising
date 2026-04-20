@@ -114,6 +114,7 @@ const zhTW = {
   'resources.viewHandbook': '學生手冊 2025/26',
   'resources.visitGURLibrary': '訪問通識教育科目庫',
   'resources.visitWebsite': '訪問網站',
+  'resources.viewGuidanceNotes': '查看通識教育指引',
   'resources.needHelp': '需要幫助查找資源？',
   'resources.needHelpDesc': '我們的AI顧問可以幫助您找到合適的文檔並回答您的問題。',
   'resources.askAI': '詢問AI顧問',

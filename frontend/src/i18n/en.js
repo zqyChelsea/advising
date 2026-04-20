@@ -114,6 +114,7 @@ const en = {
   'resources.viewHandbook': 'Student Handbook 2025/26',
   'resources.visitGURLibrary': 'Visit GUR Library',
   'resources.visitWebsite': 'Visit Website',
+  'resources.viewGuidanceNotes': 'View Guidance Notes',
   'resources.needHelp': 'Need Help Finding Resources?',
   'resources.needHelpDesc': 'Our AI advisor can help you find the right documents and answer your questions.',
   'resources.askAI': 'Ask AI Advisor',

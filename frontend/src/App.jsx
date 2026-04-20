@@ -45,6 +45,7 @@ function App() {
               <Route path="resources" element={<Resources />} />
               <Route path="resources/student-handbook" element={<PDFViewer />} />
               <Route path="resources/wie-handbook" element={<PDFViewer pdfPath="/sao_WIEHandbook.pdf" title="WIE Handbook" />} />
+              <Route path="resources/gur-guidance" element={<PDFViewer pdfPath="/GUR/Guidance_Notes_for_GUR_(For_students_admitted_from_2022-23).pdf" title="GUR Guidance Notes" />} />
               <Route path="resources/prd" element={<PRDViewer />} />
               <Route path="resources/student-wellness" element={<StudentWellnessViewer />} />
               <Route path="settings" element={<Settings />} />

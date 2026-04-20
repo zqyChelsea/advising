@@ -21,7 +21,8 @@ const Resources = () => {
       category: 'Curriculum',
       icon: 'solar:books-bold',
       color: 'bg-emerald-50 text-emerald-500',
-      externalLink: 'https://www.polyu.edu.hk/cus/GURSubjects/'
+      externalLink: 'https://www.polyu.edu.hk/cus/GURSubjects/',
+      link: '/resources/gur-guidance'
     },
     {
       id: 3,
@@ -90,7 +91,7 @@ const Resources = () => {
               {resource.description}
             </p>
             <div className="mt-4 pt-4 border-t border-slate-50 flex items-center justify-between flex-wrap gap-2">
-              {resource.externalLink ? (
+              {resource.externalLink && (
                 <a
                   href={resource.externalLink}
                   target="_blank"
@@ -100,7 +101,28 @@ const Resources = () => {
                   <span>{t('resources.visitGURLibrary')}</span>
                   <span className="iconify" data-icon="solar:arrow-right-bold"></span>
                 </a>
-              ) : resource.link ? (
+              )}
+              {resource.link && (
+                <button
+                  onClick={() => navigate(resource.link)}
+                  className="text-[#6B8E7B] text-sm font-bold flex items-center gap-1 group-hover:gap-2 transition-all"
+                >
+                  <span>{t('resources.viewGuidanceNotes')}</span>
+                  <span className="iconify" data-icon="solar:document-bold"></span>
+                </button>
+              )}
+              {resource.websiteLink && (
+                <a
+                  href={resource.websiteLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#6B8E7B] text-sm font-bold flex items-center gap-1 group-hover:gap-2 transition-all"
+                >
+                  <span>{t('resources.visitWebsite')}</span>
+                  <span className="iconify" data-icon="solar:global-bold"></span>
+                </a>
+              )}
+              {!resource.externalLink && !resource.link && !resource.websiteLink && (
                 <button
                   onClick={() => navigate(resource.link)}
                   className="text-[#6B8E7B] text-sm font-bold flex items-center gap-1 group-hover:gap-2 transition-all"
@@ -108,7 +130,7 @@ const Resources = () => {
                   <span>{t('resources.view')}</span>
                   <span className="iconify" data-icon="solar:arrow-right-bold"></span>
                 </button>
-              ) : null}
+              )}
               {resource.websiteLink && (
                 <a
                   href={resource.websiteLink}

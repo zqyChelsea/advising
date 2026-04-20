@@ -21,6 +21,8 @@ const Profile = () => {
     expectedGraduation: '06/2028',
     department: 'Computing',
     major: 'BSc (Honours) Degree in Computer Science',
+    gpa: '',
+    totalCredits: '',
     avatar: ''
   });
 
@@ -59,12 +61,14 @@ const Profile = () => {
         expectedGraduation: formatGraduationDate(user.expectedGraduation),
         department: user.department || 'Department of Computing',
         major: user.major || 'BSc (Hons) in Computing',
+        gpa: user.gpa !== undefined ? user.gpa.toString() : '',
+        totalCredits: user.totalCredits !== undefined ? user.totalCredits.toString() : '',
         avatar: user.avatar || ''
       });
       setAvatarPreview(user.avatar || '');
       setStats({
-        gpa: user.gpa || 3.72,
-        totalCredits: user.totalCredits || 45,
+        gpa: user.gpa || 0,
+        totalCredits: user.totalCredits || 0,
         gurProgress: user.gurProgress || 60
       });
     }
@@ -139,10 +143,17 @@ const Profile = () => {
         familyName: userData.familyName,
         expectedGraduation: userData.expectedGraduation,
         department: userData.department,
-        major: userData.major
+        major: userData.major,
+        gpa: userData.gpa !== '' ? parseFloat(userData.gpa) : null,
+        totalCredits: userData.totalCredits !== '' ? parseInt(userData.totalCredits, 10) : null
       });
       updateUser(response.data);
       setAvatarPreview(response.data.avatar || userData.avatar);
+      setStats({
+        gpa: response.data.gpa || 0,
+        totalCredits: response.data.totalCredits || 0,
+        gurProgress: response.data.gurProgress || 60
+      });
     } catch (error) {
       console.error('Error saving profile:', error);
       alert(error.response?.data?.message || t('profile.errorSavingProfile'));
@@ -161,9 +172,16 @@ const Profile = () => {
         expectedGraduation: formatGraduationDate(user.expectedGraduation),
         department: user.department || 'Department of Computing',
         major: user.major || 'BSc (Hons) in Computing',
+        gpa: user.gpa !== undefined ? user.gpa.toString() : '',
+        totalCredits: user.totalCredits !== undefined ? user.totalCredits.toString() : '',
         avatar: user.avatar || ''
       });
       setAvatarPreview(user.avatar || '');
+      setStats({
+        gpa: user.gpa || 0,
+        totalCredits: user.totalCredits || 0,
+        gurProgress: user.gurProgress || 60
+      });
     }
   };
 
@@ -262,6 +280,44 @@ const Profile = () => {
                   <option value="BSc (Honours) Degree in Computer Science">BSc (Honours) Degree in Computer Science</option>
                   <option value="BSc (Honours) Degree in Enterprise Information Systems">BSc (Honours) Degree in Enterprise Information Systems</option>
                 </select>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-slate-100">
+              <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Optional Fields for AI Advisor</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+                    {t('profile.gpa')} <span className="text-slate-300 font-normal">(Optional)</span>
+                  </label>
+                  <input
+                    className="w-full border-2 border-slate-100 rounded-xl px-4 py-3 focus:border-[#6B8E7B] focus:ring-0 outline-none transition-all font-medium"
+                    type="number"
+                    name="gpa"
+                    step="0.01"
+                    min="0"
+                    max="4.3"
+                    placeholder="e.g. 3.72"
+                    value={userData.gpa}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">
+                    {t('profile.totalCredits')} <span className="text-slate-300 font-normal">(Optional)</span>
+                  </label>
+                  <input
+                    className="w-full border-2 border-slate-100 rounded-xl px-4 py-3 focus:border-[#6B8E7B] focus:ring-0 outline-none transition-all font-medium"
+                    type="number"
+                    name="totalCredits"
+                    step="1"
+                    min="0"
+                    max="200"
+                    placeholder="e.g. 45"
+                    value={userData.totalCredits}
+                    onChange={handleChange}
+                  />
+                </div>
               </div>
             </div>
 

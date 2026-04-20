@@ -114,6 +114,7 @@ const zhCN = {
   'resources.viewHandbook': '学生手册 2025/26',
   'resources.visitGURLibrary': '访问通识教育科目库',
   'resources.visitWebsite': '访问网站',
+  'resources.viewGuidanceNotes': '查看通识教育指引',
   'resources.needHelp': '需要帮助查找资源？',
   'resources.needHelpDesc': '我们的AI顾问可以帮助您找到合适的文档并回答您的问题。',
   'resources.askAI': '询问AI顾问',
